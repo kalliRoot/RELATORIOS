@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório Operacional - AgroVoo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+body{font-family:Arial,sans-serif;}
+.page{width:210mm;margin:20px auto;background:white;box-shadow:0 0 15px rgba(0,0,0,.15);padding:12mm 12mm 14mm;box-sizing:border-box;position:relative;border:1px solid #e5e7eb;}
+.company-header{display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #166534;padding-bottom:10px;margin-bottom:12px;}
+.company-logo{font-size:32px;font-weight:900;color:#166534;letter-spacing:2px;line-height:1;}
+.company-sub{font-size:9px;font-weight:bold;color:#166534;letter-spacing:1px;margin-top:2px;}
+.report-title{font-size:18px;font-weight:900;color:#166534;letter-spacing:2px;}
+.report-order{font-size:11px;color:#444;margin-top:2px;text-align:center;}
+.company-contact{font-size:8.5px;color:#444;text-align:right;line-height:1.6;}
+.section-title{background-color:#166534;color:white;padding:5px 10px;font-weight:bold;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:0;}
+.info-box{border:1px solid #d1fae5;border-top:none;padding:8px 10px;background:#f9fafb;margin-bottom:8px;}
+.info-row{display:flex;align-items:center;border-bottom:1px solid #e5e7eb;min-height:22px;font-size:11px;}
+.info-row:last-child{border-bottom:none;}
+.info-label{font-weight:bold;color:#166534;width:130px;min-width:130px;font-size:10.5px;}
+.info-value{flex:1;}
+.info-value input{border:none;background:transparent;font-size:11px;outline:none;padding:1px 4px;width:100%;}
+.info-value input:focus{background:#ecfdf5;border-bottom:1px dashed #166534;}
+.grid-2col{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.grid-3col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.table-report{width:100%;border-collapse:collapse;font-size:10px;}
+.table-report th,.table-report td{border:1px solid #166534;padding:3px 5px;text-align:center;vertical-align:middle;}
+.table-report th{background-color:#166534;color:white;font-weight:bold;}
+.table-report input{width:100%;border:none;background:transparent;text-align:center;font-size:10px;outline:none;padding:1px;}
+.table-report input:focus{background:#ecfdf5;}
+.company-footer{border-top:2px solid #166534;padding-top:6px;margin-top:10px;text-align:center;font-size:8.5px;color:#444;line-height:1.7;}
+.footer-highlight{font-weight:bold;color:#166534;font-size:9px;}
+.sig-line{border-top:1px solid #333;width:180px;margin:36px auto 5px;}
+.upload-area{border:2px dashed #166534;background:#f0fdf4;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;}
+.upload-area:hover{background:#dcfce7;}
+.upload-area img{width:100%;height:100%;object-fit:contain;position:absolute;top:0;left:0;}
+.upload-hint{color:#166534;font-size:13px;font-weight:bold;text-align:center;z-index:1;}
+.upload-hint span{font-size:36px;display:block;}
+.pix-table{width:100%;font-size:11px;border-collapse:collapse;}
+.pix-table td{padding:4px 6px;border-bottom:1px solid #d1fae5;}
+.pix-table td:first-child{font-weight:bold;color:#166534;width:160px;white-space:nowrap;}
+.pix-table input{border:none;background:transparent;outline:none;font-size:11px;width:100%;}
+.row-btn{width:26px;height:26px;border-radius:50%;color:white;border:none;font-size:18px;font-weight:bold;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center;transition:opacity .2s,background .2s;}
+.row-btn:disabled{background:#9ca3af!important;cursor:not-allowed;opacity:.5;}
+.btn-add{background:#166534;}.btn-add:hover{background:#14532d;}
+.btn-remove{background:#dc2626;}.btn-remove:hover:not(:disabled){background:#b91c1c;}
+.table-header-row{display:flex;align-items:center;justify-content:space-between;}
+.table-header-row .section-title{flex:1;}
+.table-btns{display:flex;gap:5px;margin-left:8px;}
+@media print{.no-print{display:none!important;}.page{box-shadow:none;margin:0;padding:12mm 12mm 14mm;}}
+</style>
+</head>
+<body class="bg-gray-200 py-8">
+<div class="max-w-[220mm] mx-auto">
+
+<div class="flex justify-center gap-3 mb-6 no-print">
+  <button onclick="downloadPDF()" id="btnPDF" class="bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-lg font-bold shadow-lg">📄 Baixar PDF</button>
+  <button onclick="window.print()" class="bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-bold shadow-lg">🖨️ Imprimir</button>
+</div>
+
+<!-- PÁGINA 1 -->
+<div id="page1" class="page">
+  <div class="company-header">
+    <div>
+      <div class="company-logo">AGROVOO</div>
+      <div class="company-sub">TECNOLOGIA AGRÍCOLA – Pulverização Inteligente</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="report-title">RELATÓRIO OPERACIONAL</div>
+      <div class="report-order">Ordem N°: <input type="text" id="ordem" value="2509003" style="border:none;border-bottom:1px solid #166534;outline:none;font-weight:bold;width:80px;text-align:center;font-size:11px;background:transparent;"></div>
+    </div>
+    <div class="company-contact">
+      Rua Tiradentes, 2080 – Assis – SP<br>agrovoo.tec.br | contato@agrovoo.tec.br<br>(18) 99706-9421<br>CNPJ: 62.688.987/0001-36
+    </div>
+  </div>
+
+  <div class="grid-2col mb-2">
+    <div>
+      <div class="section-title">Dados do Cliente</div>
+      <div class="info-box">
+        <div class="info-row"><span class="info-label">Cliente:</span><span class="info-value"><input type="text" value="G N ESPANHOL SERVICOS AGRICOLAS"></span></div>
+        <div class="info-row"><span class="info-label">CNPJ/CPF:</span><span class="info-value"><input type="text" value="33.590.572/0001-27"></span></div>
+        <div class="info-row"><span class="info-label">Endereço:</span><span class="info-value"><input type="text" value="Av. Angelo Martins Tristão"></span></div>
+      </div>
+    </div>
+    <div>
+      <div class="section-title">Dados da Propriedade</div>
+      <div class="info-box">
+        <div class="info-row"><span class="info-label">Propriedade:</span><span class="info-value"><input type="text" value="Faz. Estância Sta. Maria"></span></div>
+        <div class="info-row"><span class="info-label">Município/UF:</span><span class="info-value"><input type="text" value="Colômbia – SP"></span></div>
+        <div class="info-row"><span class="info-label">Endereço:</span><span class="info-value"><input type="text" value="Rod. Brig Faria Lima km 88"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Dados do Serviço</div>
+  <div class="info-box">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0;">
+      <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;"><span class="info-label" style="width:auto;">Serviço</span><span class="info-value" style="width:100%;"><input type="text" value="Maturador"></span></div>
+      <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;"><span class="info-label" style="width:auto;">Cultura</span><span class="info-value" style="width:100%;"><input type="text" value="CANA-DE-AÇÚCAR"></span></div>
+      <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;"><span class="info-label" style="width:auto;">Talhões</span><span class="info-value" style="width:100%;"><input type="text" value="01, 02, 03, 07, 12"></span></div>
+      <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;"><span class="info-label" style="width:auto;">Área Total</span><span class="info-value" style="width:100%;"><input type="text" value="311,4 ha"></span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0;border-top:1px solid #e5e7eb;">
+      <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;"><span class="info-label" style="width:auto;">Data Início</span><span class="info-value" style="width:100%;"><input type="text" value="26/06/2025"></span></div>
+      <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;"><span class="info-label" style="width:auto;">Data Fim</span><span class="info-value" style="width:100%;"><input type="text" value="28/06/2025"></span></div>
+      <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;"><span class="info-label" style="width:auto;">Horas de Voo</span><span class="info-value" style="width:100%;"><input type="text" value="18:05 h"></span></div>
+      <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;"><span class="info-label" style="width:auto;">Deslocamento</span><span class="info-value" style="width:100%;"><input type="text" value="80,0 km"></span></div>
+    </div>
+  </div>
+
+  <div class="section-title">Equipe Operacional</div>
+  <div class="info-box">
+    <div class="grid-3col" style="gap:12px;">
+      <div>
+        <div style="font-size:10px;font-weight:bold;color:#166534;border-bottom:1px solid #d1fae5;padding-bottom:3px;margin-bottom:6px;">AERONAVE</div>
+        <div class="info-row" style="border:none;"><span class="info-label" style="width:80px;font-size:10px;">Modelo:</span><span class="info-value"><input type="text" value="Agas T40"></span></div>
+        <div class="info-row" style="border:none;"><span class="info-label" style="width:80px;font-size:10px;">Registro:</span><span class="info-value"><input type="text" value="PS-356085528"></span></div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:bold;color:#166534;border-bottom:1px solid #d1fae5;padding-bottom:3px;margin-bottom:6px;">PILOTO</div>
+        <div class="info-row" style="border:none;"><span class="info-label" style="width:80px;font-size:10px;">Nome:</span><span class="info-value"><input type="text" value="Saulo Borges"></span></div>
+        <div class="info-row" style="border:none;"><span class="info-label" style="width:80px;font-size:10px;">CAAR:</span><span class="info-value"><input type="text" value="21052.016695/2023-19"></span></div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:bold;color:#166534;border-bottom:1px solid #d1fae5;padding-bottom:3px;margin-bottom:6px;">RESP. TÉCNICO</div>
+        <div class="info-row" style="border:none;"><span class="info-label" style="width:80px;font-size:10px;">Nome:</span><span class="info-value"><input type="text" value="Jéssica Dadalt"></span></div>
+        <div class="info-row" style="border:none;"><span class="info-label" style="width:80px;font-size:10px;">CREA:</span><span class="info-value"><input type="text" value="5071099466-SP"></span></div>
+      </div>
+    </div>
+    <div style="border-top:1px solid #e5e7eb;margin-top:6px;padding-top:6px;">
+      <div style="font-size:10px;font-weight:bold;color:#166534;margin-bottom:4px;">AJUDANTES</div>
+      <div style="display:flex;gap:40px;font-size:11px;">
+        <input type="text" value="Alison Silva – CPF: 081.017.140-65" style="border:none;background:transparent;outline:none;width:260px;font-size:11px;">
+        <input type="text" value="Jonathan Bianqui – CPF: 362.915.600-20" style="border:none;background:transparent;outline:none;width:260px;font-size:11px;">
+      </div>
+    </div>
+  </div>
+
+  <div class="table-header-row">
+    <div class="section-title">Aplicações</div>
+    <div class="table-btns no-print">
+      <button class="row-btn btn-remove" id="btnMinusApl" onclick="removeRow('tbodyAplicacoes','btnMinusApl')" title="Remover última linha">−</button>
+      <button class="row-btn btn-add" onclick="addRowAplicacoes()" title="Adicionar linha">+</button>
+    </div>
+  </div>
+  <table class="table-report" style="margin-top:0;">
+    <thead><tr><th>Data</th><th>Início</th><th>Fim</th><th>Local (lat, lon)</th><th>Área (ha)</th><th>Meteorologia</th><th>Alt (m)</th><th>Faixa (m)</th><th>Vel (km/h)</th><th>Vol (L/ha)</th><th>Gota (μ)</th></tr></thead>
+    <tbody id="tbodyAplicacoes">
+      <tr><td><input type="text" value="26/06/2025"></td><td><input type="text" value="07:30"></td><td><input type="text" value="11:30"></td><td><input type="text" value="-20.1760, -48.6881"></td><td><input type="text" value="73"></td><td><input type="text" value="5km/h 200°S 25°C 75%"></td><td><input type="text" value="5"></td><td><input type="text" value="8"></td><td><input type="text" value="32"></td><td><input type="text" value="10"></td><td><input type="text" value="400"></td></tr>
+      <tr><td><input type="text" value="26/06/2025"></td><td><input type="text" value="16:10"></td><td><input type="text" value="22:00"></td><td><input type="text" value="-20.1760, -48.6881"></td><td><input type="text" value="103"></td><td><input type="text" value="5km/h 150°SE 25°C 75%"></td><td><input type="text" value="5"></td><td><input type="text" value="10"></td><td><input type="text" value="30"></td><td><input type="text" value="10"></td><td><input type="text" value="400"></td></tr>
+      <tr><td><input type="text" value="27/06/2025"></td><td><input type="text" value="08:00"></td><td><input type="text" value="12:45"></td><td><input type="text" value="-20.1760, -48.6881"></td><td><input type="text" value="67,4"></td><td><input type="text" value="3km/h 90°E 26°C 75%"></td><td><input type="text" value="5"></td><td><input type="text" value="10"></td><td><input type="text" value="30"></td><td><input type="text" value="10"></td><td><input type="text" value="400"></td></tr>
+      <tr><td><input type="text" value="28/06/2025"></td><td><input type="text" value="08:00"></td><td><input type="text" value="11:30"></td><td><input type="text" value="-20.1760, -48.6881"></td><td><input type="text" value="68"></td><td><input type="text" value="3km/h 270°O 28°C 75%"></td><td><input type="text" value="5"></td><td><input type="text" value="10"></td><td><input type="text" value="30"></td><td><input type="text" value="10"></td><td><input type="text" value="400"></td></tr>
+    </tbody>
+  </table>
+
+  <div class="table-header-row" style="margin-top:8px;">
+    <div class="section-title">Receituário Agronômico</div>
+    <div class="table-btns no-print">
+      <button class="row-btn btn-remove" id="btnMinusRec" onclick="removeRow('tbodyReceituario','btnMinusRec')" title="Remover última linha">−</button>
+      <button class="row-btn btn-add" onclick="addRowReceituario()" title="Adicionar linha">+</button>
+    </div>
+  </div>
+  <div style="font-size:10px;padding:3px 8px;background:#f9fafb;border:1px solid #d1fae5;border-top:none;margin-bottom:0;">
+    Número do Receituário: <input type="text" value="R - 012345" style="border:none;border-bottom:1px solid #166534;outline:none;width:110px;font-size:10px;background:transparent;">
+  </div>
+  <table class="table-report">
+    <thead><tr><th>Produto</th><th>Classe</th><th>Unidade</th><th>Qtd/ha</th><th>Qtd Total</th></tr></thead>
+    <tbody id="tbodyReceituario">
+      <tr><td><input type="text" value="Trill"></td><td><input type="text" value="Adjuvante"></td><td><input type="text" value="L/ha"></td><td><input type="text" value="0,05"></td><td><input type="text" value="15,570 L"></td></tr>
+      <tr><td><input type="text" value="Moddus"></td><td><input type="text" value="Regulador de Crescimento"></td><td><input type="text" value="L/ha"></td><td><input type="text" value="1,20"></td><td><input type="text" value="373,68 L"></td></tr>
+    </tbody>
+  </table>
+
+  <div class="company-footer"><span class="footer-highlight">AGROVOO TECNOLOGIA AGRÍCOLA</span> – Pulverização Inteligente &nbsp;|&nbsp; Rua Tiradentes, 2080 – Assis – SP &nbsp;|&nbsp; agrovoo.tec.br &nbsp;|&nbsp; contato@agrovoo.tec.br &nbsp;|&nbsp; (18) 99706-9421</div>
+  <div class="absolute bottom-3 right-8 text-[9px] text-gray-400">Página 1 de 3</div>
+</div>
+
+<!-- PÁGINA 2 -->
+<div id="page2" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #166534;padding-bottom:6px;margin-bottom:10px;">
+    <span class="company-logo" style="font-size:20px;">AGROVOO</span>
+    <div style="font-size:12px;font-weight:bold;color:#166534;">RELATÓRIO OPERACIONAL — Ordem N° <input type="text" value="2509003" style="border:none;border-bottom:1px solid #166534;outline:none;width:70px;font-size:11px;background:transparent;font-weight:bold;"></div>
+  </div>
+
+  <div class="section-title">Observações Meteorológicas</div>
+  <div style="background:#f9fafb;border:1px solid #d1fae5;border-top:none;padding:8px 10px;margin-bottom:8px;font-size:10.5px;">
+    <textarea style="width:100%;height:26px;resize:none;border:none;background:transparent;outline:none;font-size:10.5px;font-family:Arial;">[26/06/2025, 19:10] Guilherme Espanhol — Vento: 6 km/h | Direção: 160° | Temperatura: 25°C | Umidade: 70%</textarea>
+    <textarea style="width:100%;height:26px;resize:none;border:none;background:transparent;outline:none;font-size:10.5px;font-family:Arial;border-top:1px solid #e5e7eb;">[27/06/2025, 10:20] Guilherme Espanhol — Vento: 8 km/h | Direção: 44° | Temperatura: 30,6°C | Umidade: 63%</textarea>
+    <textarea style="width:100%;height:26px;resize:none;border:none;background:transparent;outline:none;font-size:10.5px;font-family:Arial;border-top:1px solid #e5e7eb;">[28/06/2025, 10:01] Guilherme Espanhol — Vento: 4 km/h | Direção: 122° | Temperatura: 28°C | Umidade: 72%</textarea>
+  </div>
+
+  <div class="section-title">Resumo Financeiro</div>
+  <div style="border:1px solid #d1fae5;border-top:none;padding:10px;background:#f9fafb;margin-bottom:8px;">
+    <div class="grid-3col" style="gap:10px;">
+      <div style="background:white;border:1px solid #d1fae5;border-radius:6px;padding:10px;">
+        <div style="font-size:10px;font-weight:bold;color:#166534;border-bottom:1px solid #d1fae5;padding-bottom:4px;margin-bottom:6px;">SERVIÇO</div>
+        <table style="width:100%;font-size:10.5px;">
+          <tr><td style="padding:2px 0;color:#555;">Área total:</td><td style="text-align:right;"><input type="text" value="311,4 ha" style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;"></td></tr>
+          <tr><td style="padding:2px 0;color:#555;">Valor/ha:</td><td style="text-align:right;"><input type="text" value="R$ 90,00" style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;"></td></tr>
+          <tr style="border-top:1px solid #e5e7eb;"><td style="padding:4px 0;font-weight:bold;">Subtotal:</td><td style="text-align:right;font-weight:bold;"><input type="text" value="R$ 28.026,00" style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;font-weight:bold;"></td></tr>
+        </table>
+      </div>
+      <div style="background:white;border:1px solid #bfdbfe;border-radius:6px;padding:10px;">
+        <div style="font-size:10px;font-weight:bold;color:#1d4ed8;border-bottom:1px solid #bfdbfe;padding-bottom:4px;margin-bottom:6px;">DESLOCAMENTO</div>
+        <table style="width:100%;font-size:10.5px;">
+          <tr><td style="padding:2px 0;color:#555;">Quilômetros:</td><td style="text-align:right;"><input type="text" value="80,0 km" style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;"></td></tr>
+          <tr><td style="padding:2px 0;color:#555;">Valor/km:</td><td style="text-align:right;"><input type="text" value="R$ 3,00" style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;"></td></tr>
+          <tr style="border-top:1px solid #e5e7eb;"><td style="padding:4px 0;font-weight:bold;">Subtotal:</td><td style="text-align:right;font-weight:bold;"><input type="text" value="R$ 240,00" style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;font-weight:bold;"></td></tr>
+        </table>
+      </div>
+      <div style="background:white;border:1px solid #fed7aa;border-radius:6px;padding:10px;">
+        <div style="font-size:10px;font-weight:bold;color:#c2410c;border-bottom:1px solid #fed7aa;padding-bottom:4px;margin-bottom:6px;">OUTROS</div>
+        <table style="width:100%;font-size:10.5px;">
+          <tr><td style="padding:2px 0;color:#555;">Descrição:</td><td style="text-align:right;"><input type="text" value="—" style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;"></td></tr>
+          <tr style="border-top:1px solid #e5e7eb;"><td style="padding:4px 0;font-weight:bold;">Subtotal:</td><td style="text-align:right;font-weight:bold;"><input type="text" value="R$ 0,00" style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;font-weight:bold;"></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;background:#166534;color:white;padding:8px 14px;border-radius:6px;margin-top:10px;">
+      <span style="font-size:12px;font-weight:bold;letter-spacing:1px;">VALOR TOTAL GERAL</span>
+      <input type="text" id="total" value="R$ 28.266,00" style="border:none;background:transparent;color:white;font-size:16px;font-weight:900;outline:none;text-align:right;width:140px;">
+    </div>
+  </div>
+
+  <div class="section-title">Assinaturas</div>
+  <div style="border:1px solid #d1fae5;border-top:none;padding:10px 20px;background:#f9fafb;margin-bottom:8px;">
+    <div class="grid-3col" style="text-align:center;gap:20px;">
+      <div>
+        <div class="sig-line"></div>
+        <div style="font-size:10px;font-weight:bold;">CLIENTE</div>
+        <div><input type="text" value="G N Espanhol Serviços Agrícolas" style="border:none;background:transparent;outline:none;width:100%;text-align:center;font-size:9.5px;margin-top:2px;"></div>
+        <div style="font-size:8.5px;color:#555;">CNPJ: 33.590.572/0001-27</div>
+      </div>
+      <div>
+        <div class="sig-line"></div>
+        <div style="font-size:10px;font-weight:bold;">RESPONSÁVEL TÉCNICO</div>
+        <div><input type="text" value="Jéssica Dadalt" style="border:none;background:transparent;outline:none;width:100%;text-align:center;font-size:9.5px;margin-top:2px;"></div>
+        <div style="font-size:8.5px;color:#555;">CREA: 5071099466-SP</div>
+      </div>
+      <div>
+        <div class="sig-line"></div>
+        <div style="font-size:10px;font-weight:bold;">PILOTO</div>
+        <div><input type="text" value="Saulo Borges" style="border:none;background:transparent;outline:none;width:100%;text-align:center;font-size:9.5px;margin-top:2px;"></div>
+        <div style="font-size:8.5px;color:#555;">CAAR: 21052.016695/2023-19</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="company-footer"><span class="footer-highlight">AGROVOO TECNOLOGIA AGRÍCOLA</span> – Pulverização Inteligente &nbsp;|&nbsp; Rua Tiradentes, 2080 – Assis – SP &nbsp;|&nbsp; agrovoo.tec.br &nbsp;|&nbsp; contato@agrovoo.tec.br &nbsp;|&nbsp; (18) 99706-9421</div>
+  <div class="absolute bottom-3 right-8 text-[9px] text-gray-400">Página 2 de 3</div>
+</div>
+
+<!-- PÁGINA 3 -->
+<div id="page3" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #166534;padding-bottom:6px;margin-bottom:10px;">
+    <span class="company-logo" style="font-size:20px;">AGROVOO</span>
+    <div style="font-size:12px;font-weight:bold;color:#166534;">CROQUI / MAPA DE APLICAÇÕES</div>
+  </div>
+
+  <div class="upload-area" id="uploadArea" onclick="document.getElementById('imgInput').click()">
+    <img id="mapaPreview" src="" alt="" style="display:none;">
+    <div class="upload-hint" id="uploadHint">
+      <span>🗺️</span>
+      Clique aqui para importar o mapa do PC<br>
+      <span style="font-size:11px;font-weight:normal;color:#555;">(JPG, PNG, etc.)</span>
+    </div>
+  </div>
+  <input type="file" id="imgInput" accept="image/*" style="display:none;" onchange="loadMapImage(event)">
+
+  <div class="no-print" style="text-align:center;margin-top:6px;">
+    <button onclick="document.getElementById('imgInput').click()" style="background:#166534;color:white;border:none;padding:6px 18px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:bold;">📁 Selecionar imagem</button>
+    <button onclick="limparMapa()" style="background:#dc2626;color:white;border:none;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:bold;margin-left:8px;">✕ Remover</button>
+  </div>
+
+  <div style="text-align:center;font-size:10px;margin-top:6px;color:#444;">
+    <input type="text" value="Ordem de Serviço N° 2509003 – G N ESPANHOL SERVICOS AGRICOLAS" style="border:none;border-bottom:1px solid #ccc;outline:none;width:100%;text-align:center;font-size:10px;background:transparent;">
+    <div style="margin-top:3px;">
+      Propriedade: <input type="text" value="Faz. Estância Sta. Maria" style="border:none;border-bottom:1px solid #ccc;outline:none;width:180px;font-size:10px;background:transparent;">
+      &nbsp;&nbsp;Município: <input type="text" value="Colômbia – SP" style="border:none;border-bottom:1px solid #ccc;outline:none;width:100px;font-size:10px;background:transparent;">
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:12px;">Condições de Pagamento</div>
+  <div style="border:1px solid #d1fae5;border-top:none;background:#f9fafb;padding:10px 12px;margin-bottom:8px;">
+    <div class="grid-2col" style="gap:12px;">
+      <div>
+        <div style="font-size:10px;font-weight:bold;color:#166534;margin-bottom:6px;border-bottom:1px solid #d1fae5;padding-bottom:3px;">VALORES DO SERVIÇO</div>
+        <table class="pix-table">
+          <tr><td>Valor cobrado:</td><td><input type="text" value="R$ 90,00"> / ha</td></tr>
+          <tr><td>Área total aplicada:</td><td><input type="text" value="311,4"> ha</td></tr>
+          <tr><td style="font-weight:bold;color:#166534;">Valor total:</td><td><input type="text" value="R$ 28.266,00" style="font-weight:bold;color:#166534;"></td></tr>
+          <tr><td>Forma de pagamento:</td><td><input type="text" value="Após término do serviço"></td></tr>
+          <tr><td>Data prevista pgto:</td><td><input type="text" value="05/07/2025"></td></tr>
+        </table>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:bold;color:#166534;margin-bottom:6px;border-bottom:1px solid #d1fae5;padding-bottom:3px;">🔑 DADOS PARA PIX</div>
+        <table class="pix-table">
+          <tr><td>Meio:</td><td><input type="text" value="PIX"></td></tr>
+          <tr><td>Tipo de chave:</td><td><input type="text" value="CNPJ"></td></tr>
+          <tr><td>Chave PIX (CNPJ):</td><td><input type="text" value="62.688.987/0001-36" style="font-weight:bold;"></td></tr>
+          <tr><td>Favorecido:</td><td><input type="text" value="AgroVoo Tecnologia Agrícola"></td></tr>
+          <tr><td>Observação:</td><td><input type="text" value="Pagamento em parcela única"></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="company-footer"><span class="footer-highlight">AGROVOO TECNOLOGIA AGRÍCOLA</span> – Pulverização Inteligente &nbsp;|&nbsp; Rua Tiradentes, 2080 – Assis – SP &nbsp;|&nbsp; agrovoo.tec.br &nbsp;|&nbsp; contato@agrovoo.tec.br &nbsp;|&nbsp; (18) 99706-9421</div>
+  <div class="absolute bottom-3 right-8 text-[9px] text-gray-400">Página 3 de 3</div>
+</div>
+
+</div><!-- fim container -->
+
+<script>
+// ── LINHAS DINÂMICAS ─────────────────────────────────────────────────────────
+const MIN_ROWS = 1;
+function updateMinusBtn(tbodyId, btnId) {
+  var tbody = document.getElementById(tbodyId);
+  var btn = document.getElementById(btnId);
+  if (!btn || !tbody) return;
+  btn.disabled = tbody.querySelectorAll('tr').length <= MIN_ROWS;
+}
+function removeRow(tbodyId, btnId) {
+  var tbody = document.getElementById(tbodyId);
+  var rows = tbody.querySelectorAll('tr');
+  if (rows.length <= MIN_ROWS) return;
+  rows[rows.length - 1].remove();
+  updateMinusBtn(tbodyId, btnId);
+}
+function mkTd(){ return '<td><input type="text" value="" style="width:100%;border:none;background:transparent;text-align:center;font-size:10px;outline:none;padding:1px;"></td>'; }
+function addRowAplicacoes() {
+  var tbody = document.getElementById('tbodyAplicacoes');
+  var tr = document.createElement('tr');
+  tr.innerHTML = Array(11).fill('').map(mkTd).join('');
+  tbody.appendChild(tr);
+  updateMinusBtn('tbodyAplicacoes', 'btnMinusApl');
+}
+function addRowReceituario() {
+  var tbody = document.getElementById('tbodyReceituario');
+  var tr = document.createElement('tr');
+  tr.innerHTML = Array(5).fill('').map(mkTd).join('');
+  tbody.appendChild(tr);
+  updateMinusBtn('tbodyReceituario', 'btnMinusRec');
+}
+
+// ── UPLOAD MAPA ──────────────────────────────────────────────────────────────
+function loadMapImage(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = document.getElementById('mapaPreview');
+    var hint = document.getElementById('uploadHint');
+    img.src = e.target.result;
+    img.style.display = 'block';
+    hint.style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+function limparMapa() {
+  var img = document.getElementById('mapaPreview');
+  var hint = document.getElementById('uploadHint');
+  img.src = ''; img.style.display = 'none'; hint.style.display = 'block';
+  document.getElementById('imgInput').value = '';
+}
+
+// ── DOWNLOAD PDF — página por página, sem folhas em branco ──────────────────
+async function downloadPDF() {
+  var btn = document.getElementById('btnPDF');
+  btn.disabled = true;
+  btn.textContent = '⏳ Gerando PDF...';
+
+  // Esconde elementos no-print
+  var noprints = document.querySelectorAll('.no-print');
+  noprints.forEach(function(el){ el.style.display = 'none'; });
+
+  // Substitui inputs/textareas por spans
+  var replacements = [];
+  document.querySelectorAll('.page input, .page textarea').forEach(function(el) {
+    var val = el.value || '';
+    var span = document.createElement('span');
+    span.style.display = 'inline-block';
+    span.style.width = '100%';
+    span.style.fontSize = el.style.fontSize || 'inherit';
+    span.style.fontWeight = el.style.fontWeight || 'inherit';
+    span.style.color = el.style.color || 'inherit';
+    span.style.textAlign = el.style.textAlign || 'left';
+    span.style.wordBreak = 'break-word';
+    span.style.whiteSpace = 'normal';
+    span.style.background = 'transparent';
+    span.textContent = val;
+    el.parentNode.insertBefore(span, el);
+    el.style.display = 'none';
+    replacements.push({ span: span, el: el });
+  });
+
+  await new Promise(function(r){ setTimeout(r, 100); });
+
+  var pages = document.querySelectorAll('.page');
+  var jspdf = window.jspdf;
+  var doc = new jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+  var pageW = doc.internal.pageSize.getWidth();
+  var pageH = doc.internal.pageSize.getHeight();
+
+  for (var i = 0; i < pages.length; i++) {
+    var canvas = await html2canvas(pages[i], {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      backgroundColor: '#ffffff',
+      width: pages[i].offsetWidth,
+      height: pages[i].offsetHeight
+    });
+
+    var imgData = canvas.toDataURL('image/jpeg', 0.97);
+    var ratio = canvas.width / canvas.height;
+    var imgW = pageW;
+    var imgH = imgW / ratio;
+
+    if (i > 0) doc.addPage();
+    doc.addImage(imgData, 'JPEG', 0, 0, imgW, Math.min(imgH, pageH));
+  }
+
+  var ordem = document.getElementById('ordem') ? document.getElementById('ordem').value : 'SN';
+  doc.save('Relatorio_Operacional_AgroVoo_' + ordem + '.pdf');
+
+  // Restaura
+  replacements.forEach(function(r){ r.el.style.display = ''; r.span.remove(); });
+  noprints.forEach(function(el){ el.style.display = ''; });
+  btn.disabled = false;
+  btn.textContent = '📄 Baixar PDF';
+}
+
+window.onload = function() {
+  updateMinusBtn('tbodyAplicacoes', 'btnMinusApl');
+  updateMinusBtn('tbodyReceituario', 'btnMinusRec');
+};
+</script>
+</body>
+</html>
