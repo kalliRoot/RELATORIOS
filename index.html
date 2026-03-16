@@ -50,6 +50,9 @@ body{font-family:Arial,sans-serif;}
 .table-header-row{display:flex;align-items:center;justify-content:space-between;}
 .table-header-row .section-title{flex:1;}
 .table-btns{display:flex;gap:5px;margin-left:8px;}
+.obs-textarea{width:100%;min-height:90px;resize:vertical;border:none;background:transparent;outline:none;font-size:11px;font-family:Arial;line-height:1.7;padding:10px;box-sizing:border-box;color:#222;}
+.obs-textarea::placeholder{color:#aaa;}
+.obs-textarea:focus{background:#f0fdf4;}
 @media print{.no-print{display:none!important;}.page{box-shadow:none;margin:0;padding:12mm 12mm 14mm;}}
 </style>
 </head>
@@ -57,16 +60,16 @@ body{font-family:Arial,sans-serif;}
 <div class="max-w-[220mm] mx-auto">
 
 <div class="flex justify-center gap-3 mb-6 no-print">
-  <button onclick="downloadPDF()" id="btnPDF" class="bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-lg font-bold shadow-lg">📄 Baixar PDF</button>
-  <button onclick="window.print()" class="bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-bold shadow-lg">🖨️ Imprimir</button>
+  <button onclick="downloadPDF()" id="btnPDF" class="bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-lg font-bold shadow-lg">&#128196; Baixar PDF</button>
+  <button onclick="window.print()" class="bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-bold shadow-lg">&#128424; Imprimir</button>
 </div>
 
-<!-- PÁGINA 1 -->
+<!-- PAGINA 1 -->
 <div id="page1" class="page">
   <div class="company-header">
     <div>
       <div class="company-logo">AGROVOO</div>
-      <div class="company-sub">TECNOLOGIA AGRÍCOLA – Pulverização Inteligente</div>
+      <div class="company-sub">TECNOLOGIA AGRICOLA - Pulverizacao Inteligente</div>
     </div>
     <div style="text-align:center;">
       <div class="report-title">RELATÓRIO OPERACIONAL</div>
@@ -98,13 +101,13 @@ body{font-family:Arial,sans-serif;}
 
   <div class="section-title">Dados do Serviço</div>
   <div class="info-box">
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0;">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;">
       <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;"><span class="info-label" style="width:auto;">Serviço</span><span class="info-value" style="width:100%;"><input type="text" value="Maturador"></span></div>
       <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;"><span class="info-label" style="width:auto;">Cultura</span><span class="info-value" style="width:100%;"><input type="text" value="CANA-DE-AÇÚCAR"></span></div>
       <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;"><span class="info-label" style="width:auto;">Talhões</span><span class="info-value" style="width:100%;"><input type="text" value="01, 02, 03, 07, 12"></span></div>
       <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;"><span class="info-label" style="width:auto;">Área Total</span><span class="info-value" style="width:100%;"><input type="text" value="311,4 ha"></span></div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0;border-top:1px solid #e5e7eb;">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-top:1px solid #e5e7eb;">
       <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;"><span class="info-label" style="width:auto;">Data Início</span><span class="info-value" style="width:100%;"><input type="text" value="26/06/2025"></span></div>
       <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;"><span class="info-label" style="width:auto;">Data Fim</span><span class="info-value" style="width:100%;"><input type="text" value="28/06/2025"></span></div>
       <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;"><span class="info-label" style="width:auto;">Horas de Voo</span><span class="info-value" style="width:100%;"><input type="text" value="18:05 h"></span></div>
@@ -117,7 +120,7 @@ body{font-family:Arial,sans-serif;}
     <div class="grid-3col" style="gap:12px;">
       <div>
         <div style="font-size:10px;font-weight:bold;color:#166534;border-bottom:1px solid #d1fae5;padding-bottom:3px;margin-bottom:6px;">AERONAVE</div>
-        <div class="info-row" style="border:none;"><span class="info-label" style="width:80px;font-size:10px;">Modelo:</span><span class="info-value"><input type="text" value="EAV-30XP"></span></div>
+        <div class="info-row" style="border:none;"><span class="info-label" style="width:80px;font-size:10px;">Modelo:</span><span class="info-value"><input type="text" value="Agas T40"></span></div>
         <div class="info-row" style="border:none;"><span class="info-label" style="width:80px;font-size:10px;">Registro:</span><span class="info-value"><input type="text" value="PS-356085528"></span></div>
       </div>
       <div>
@@ -133,7 +136,7 @@ body{font-family:Arial,sans-serif;}
     </div>
     <div style="border-top:1px solid #e5e7eb;margin-top:6px;padding-top:6px;">
       <div style="font-size:10px;font-weight:bold;color:#166534;margin-bottom:4px;">AJUDANTES</div>
-      <div style="display:flex;gap:40px;font-size:11px;">
+      <div style="display:flex;gap:40px;">
         <input type="text" value="Alison Silva – CPF: 081.017.140-65" style="border:none;background:transparent;outline:none;width:260px;font-size:11px;">
         <input type="text" value="Jonathan Bianqui – CPF: 362.915.600-20" style="border:none;background:transparent;outline:none;width:260px;font-size:11px;">
       </div>
@@ -143,24 +146,24 @@ body{font-family:Arial,sans-serif;}
   <div class="table-header-row">
     <div class="section-title">Aplicações</div>
     <div class="table-btns no-print">
-      <button class="row-btn btn-remove" id="btnMinusApl" onclick="removeRow('tbodyAplicacoes','btnMinusApl')" title="Remover última linha">−</button>
+      <button class="row-btn btn-remove" id="btnMinusApl" onclick="removeRow('tbodyAplicacoes','btnMinusApl')" title="Remover última linha">&#8722;</button>
       <button class="row-btn btn-add" onclick="addRowAplicacoes()" title="Adicionar linha">+</button>
     </div>
   </div>
   <table class="table-report" style="margin-top:0;">
     <thead><tr><th>Data</th><th>Início</th><th>Fim</th><th>Local (lat, lon)</th><th>Área (ha)</th><th>Meteorologia</th><th>Alt (m)</th><th>Faixa (m)</th><th>Vel (km/h)</th><th>Vol (L/ha)</th><th>Gota (μ)</th></tr></thead>
     <tbody id="tbodyAplicacoes">
-      <tr><td><input type="text" value="26/06/2025"></td><td><input type="text" value="07:30"></td><td><input type="text" value="11:30"></td><td><input type="text" value="-20.1760, -48.6881"></td><td><input type="text" value="73"></td><td><input type="text" value="5km/h 200°S 25°C 75%"></td><td><input type="text" value="5"></td><td><input type="text" value="8"></td><td><input type="text" value="32"></td><td><input type="text" value="10"></td><td><input type="text" value="400"></td></tr>
-      <tr><td><input type="text" value="26/06/2025"></td><td><input type="text" value="16:10"></td><td><input type="text" value="22:00"></td><td><input type="text" value="-20.1760, -48.6881"></td><td><input type="text" value="103"></td><td><input type="text" value="5km/h 150°SE 25°C 75%"></td><td><input type="text" value="5"></td><td><input type="text" value="10"></td><td><input type="text" value="30"></td><td><input type="text" value="10"></td><td><input type="text" value="400"></td></tr>
-      <tr><td><input type="text" value="27/06/2025"></td><td><input type="text" value="08:00"></td><td><input type="text" value="12:45"></td><td><input type="text" value="-20.1760, -48.6881"></td><td><input type="text" value="67,4"></td><td><input type="text" value="3km/h 90°E 26°C 75%"></td><td><input type="text" value="5"></td><td><input type="text" value="10"></td><td><input type="text" value="30"></td><td><input type="text" value="10"></td><td><input type="text" value="400"></td></tr>
-      <tr><td><input type="text" value="28/06/2025"></td><td><input type="text" value="08:00"></td><td><input type="text" value="11:30"></td><td><input type="text" value="-20.1760, -48.6881"></td><td><input type="text" value="68"></td><td><input type="text" value="3km/h 270°O 28°C 75%"></td><td><input type="text" value="5"></td><td><input type="text" value="10"></td><td><input type="text" value="30"></td><td><input type="text" value="10"></td><td><input type="text" value="400"></td></tr>
+      <tr><td><input type="text" value="26/06/2025"></td><td><input type="text" value="07:30"></td><td><input type="text" value="11:30"></td><td><input type="text" value="-20.1760, -48.6881"></td><td><input type="text" value="73"></td><td><input type="text" value="5km/h 200S 25C 75%"></td><td><input type="text" value="5"></td><td><input type="text" value="8"></td><td><input type="text" value="32"></td><td><input type="text" value="10"></td><td><input type="text" value="400"></td></tr>
+      <tr><td><input type="text" value="26/06/2025"></td><td><input type="text" value="16:10"></td><td><input type="text" value="22:00"></td><td><input type="text" value="-20.1760, -48.6881"></td><td><input type="text" value="103"></td><td><input type="text" value="5km/h 150SE 25C 75%"></td><td><input type="text" value="5"></td><td><input type="text" value="10"></td><td><input type="text" value="30"></td><td><input type="text" value="10"></td><td><input type="text" value="400"></td></tr>
+      <tr><td><input type="text" value="27/06/2025"></td><td><input type="text" value="08:00"></td><td><input type="text" value="12:45"></td><td><input type="text" value="-20.1760, -48.6881"></td><td><input type="text" value="67,4"></td><td><input type="text" value="3km/h 90E 26C 75%"></td><td><input type="text" value="5"></td><td><input type="text" value="10"></td><td><input type="text" value="30"></td><td><input type="text" value="10"></td><td><input type="text" value="400"></td></tr>
+      <tr><td><input type="text" value="28/06/2025"></td><td><input type="text" value="08:00"></td><td><input type="text" value="11:30"></td><td><input type="text" value="-20.1760, -48.6881"></td><td><input type="text" value="68"></td><td><input type="text" value="3km/h 270O 28C 75%"></td><td><input type="text" value="5"></td><td><input type="text" value="10"></td><td><input type="text" value="30"></td><td><input type="text" value="10"></td><td><input type="text" value="400"></td></tr>
     </tbody>
   </table>
 
   <div class="table-header-row" style="margin-top:8px;">
     <div class="section-title">Receituário Agronômico</div>
     <div class="table-btns no-print">
-      <button class="row-btn btn-remove" id="btnMinusRec" onclick="removeRow('tbodyReceituario','btnMinusRec')" title="Remover última linha">−</button>
+      <button class="row-btn btn-remove" id="btnMinusRec" onclick="removeRow('tbodyReceituario','btnMinusRec')" title="Remover última linha">&#8722;</button>
       <button class="row-btn btn-add" onclick="addRowReceituario()" title="Adicionar linha">+</button>
     </div>
   </div>
@@ -175,22 +178,22 @@ body{font-family:Arial,sans-serif;}
     </tbody>
   </table>
 
-  <div class="company-footer"><span class="footer-highlight">AGROVOO TECNOLOGIA AGRÍCOLA</span> – Pulverização Inteligente &nbsp;|&nbsp; Rua Tiradentes, 2080 – Assis – SP &nbsp;|&nbsp; agrovoo.tec.br &nbsp;|&nbsp; contato@agrovoo.tec.br &nbsp;|&nbsp; (18) 99706-9421</div>
+  <div class="company-footer"><span class="footer-highlight">AGROVOO TECNOLOGIA AGRICOLA</span> – Pulverizacao Inteligente &nbsp;|&nbsp; Rua Tiradentes, 2080 – Assis – SP &nbsp;|&nbsp; agrovoo.tec.br &nbsp;|&nbsp; contato@agrovoo.tec.br &nbsp;|&nbsp; (18) 99706-9421</div>
   <div class="absolute bottom-3 right-8 text-[9px] text-gray-400">Página 1 de 3</div>
 </div>
 
-<!-- PÁGINA 2 -->
+<!-- PAGINA 2 -->
 <div id="page2" class="page">
   <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #166534;padding-bottom:6px;margin-bottom:10px;">
     <span class="company-logo" style="font-size:20px;">AGROVOO</span>
     <div style="font-size:12px;font-weight:bold;color:#166534;">RELATÓRIO OPERACIONAL — Ordem N° <input type="text" value="2509003" style="border:none;border-bottom:1px solid #166534;outline:none;width:70px;font-size:11px;background:transparent;font-weight:bold;"></div>
   </div>
 
-  <div class="section-title">Observações Meteorológicas</div>
-  <div style="background:#f9fafb;border:1px solid #d1fae5;border-top:none;padding:8px 10px;margin-bottom:8px;font-size:10.5px;">
-    <textarea style="width:100%;height:26px;resize:none;border:none;background:transparent;outline:none;font-size:10.5px;font-family:Arial;">[26/06/2025, 19:10] Guilherme Espanhol — Vento: 6 km/h | Direção: 160° | Temperatura: 25°C | Umidade: 70%</textarea>
-    <textarea style="width:100%;height:26px;resize:none;border:none;background:transparent;outline:none;font-size:10.5px;font-family:Arial;border-top:1px solid #e5e7eb;">[27/06/2025, 10:20] Guilherme Espanhol — Vento: 8 km/h | Direção: 44° | Temperatura: 30,6°C | Umidade: 63%</textarea>
-    <textarea style="width:100%;height:26px;resize:none;border:none;background:transparent;outline:none;font-size:10.5px;font-family:Arial;border-top:1px solid #e5e7eb;">[28/06/2025, 10:01] Guilherme Espanhol — Vento: 4 km/h | Direção: 122° | Temperatura: 28°C | Umidade: 72%</textarea>
+  <div class="section-title">Observações</div>
+  <div style="background:#f9fafb;border:1px solid #d1fae5;border-top:none;margin-bottom:8px;">
+    <textarea id="obsTexto" oninput="autoResize(this)" class="obs-textarea" placeholder="Digite aqui suas observações, medições meteorológicas, intercorrências ou qualquer anotação relevante sobre o serviço...">[26/06/2025, 19:10] Guilherme Espanhol — Vento: 6 km/h | Direção: 160° | Temperatura: 25°C | Umidade: 70%
+[27/06/2025, 10:20] Guilherme Espanhol — Vento: 8 km/h | Direção: 44° | Temperatura: 30,6°C | Umidade: 63%
+[28/06/2025, 10:01] Guilherme Espanhol — Vento: 4 km/h | Direção: 122° | Temperatura: 28°C | Umidade: 72%</textarea>
   </div>
 
   <div class="section-title">Resumo Financeiro</div>
@@ -232,29 +235,29 @@ body{font-family:Arial,sans-serif;}
       <div>
         <div class="sig-line"></div>
         <div style="font-size:10px;font-weight:bold;">CLIENTE</div>
-        <div><input type="text" value="G N Espanhol Serviços Agrícolas" style="border:none;background:transparent;outline:none;width:100%;text-align:center;font-size:9.5px;margin-top:2px;"></div>
+        <input type="text" value="G N Espanhol Serviços Agrícolas" style="border:none;background:transparent;outline:none;width:100%;text-align:center;font-size:9.5px;margin-top:2px;">
         <div style="font-size:8.5px;color:#555;">CNPJ: 33.590.572/0001-27</div>
       </div>
       <div>
         <div class="sig-line"></div>
         <div style="font-size:10px;font-weight:bold;">RESPONSÁVEL TÉCNICO</div>
-        <div><input type="text" value="Jéssica Dadalt" style="border:none;background:transparent;outline:none;width:100%;text-align:center;font-size:9.5px;margin-top:2px;"></div>
+        <input type="text" value="Jéssica Dadalt" style="border:none;background:transparent;outline:none;width:100%;text-align:center;font-size:9.5px;margin-top:2px;">
         <div style="font-size:8.5px;color:#555;">CREA: 5071099466-SP</div>
       </div>
       <div>
         <div class="sig-line"></div>
         <div style="font-size:10px;font-weight:bold;">PILOTO</div>
-        <div><input type="text" value="Saulo Borges" style="border:none;background:transparent;outline:none;width:100%;text-align:center;font-size:9.5px;margin-top:2px;"></div>
+        <input type="text" value="Saulo Borges" style="border:none;background:transparent;outline:none;width:100%;text-align:center;font-size:9.5px;margin-top:2px;">
         <div style="font-size:8.5px;color:#555;">CAAR: 21052.016695/2023-19</div>
       </div>
     </div>
   </div>
 
-  <div class="company-footer"><span class="footer-highlight">AGROVOO TECNOLOGIA AGRÍCOLA</span> – Pulverização Inteligente &nbsp;|&nbsp; Rua Tiradentes, 2080 – Assis – SP &nbsp;|&nbsp; agrovoo.tec.br &nbsp;|&nbsp; contato@agrovoo.tec.br &nbsp;|&nbsp; (18) 99706-9421</div>
+  <div class="company-footer"><span class="footer-highlight">AGROVOO TECNOLOGIA AGRICOLA</span> – Pulverizacao Inteligente &nbsp;|&nbsp; Rua Tiradentes, 2080 – Assis – SP &nbsp;|&nbsp; agrovoo.tec.br &nbsp;|&nbsp; contato@agrovoo.tec.br &nbsp;|&nbsp; (18) 99706-9421</div>
   <div class="absolute bottom-3 right-8 text-[9px] text-gray-400">Página 2 de 3</div>
 </div>
 
-<!-- PÁGINA 3 -->
+<!-- PAGINA 3 -->
 <div id="page3" class="page">
   <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #166534;padding-bottom:6px;margin-bottom:10px;">
     <span class="company-logo" style="font-size:20px;">AGROVOO</span>
@@ -264,7 +267,7 @@ body{font-family:Arial,sans-serif;}
   <div class="upload-area" id="uploadArea" onclick="document.getElementById('imgInput').click()">
     <img id="mapaPreview" src="" alt="" style="display:none;">
     <div class="upload-hint" id="uploadHint">
-      <span>🗺️</span>
+      <span>&#128506;</span>
       Clique aqui para importar o mapa do PC<br>
       <span style="font-size:11px;font-weight:normal;color:#555;">(JPG, PNG, etc.)</span>
     </div>
@@ -272,8 +275,8 @@ body{font-family:Arial,sans-serif;}
   <input type="file" id="imgInput" accept="image/*" style="display:none;" onchange="loadMapImage(event)">
 
   <div class="no-print" style="text-align:center;margin-top:6px;">
-    <button onclick="document.getElementById('imgInput').click()" style="background:#166534;color:white;border:none;padding:6px 18px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:bold;">📁 Selecionar imagem</button>
-    <button onclick="limparMapa()" style="background:#dc2626;color:white;border:none;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:bold;margin-left:8px;">✕ Remover</button>
+    <button onclick="document.getElementById('imgInput').click()" style="background:#166534;color:white;border:none;padding:6px 18px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:bold;">&#128193; Selecionar imagem</button>
+    <button onclick="limparMapa()" style="background:#dc2626;color:white;border:none;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:bold;margin-left:8px;">&#10005; Remover</button>
   </div>
 
   <div style="text-align:center;font-size:10px;margin-top:6px;color:#444;">
@@ -298,7 +301,7 @@ body{font-family:Arial,sans-serif;}
         </table>
       </div>
       <div>
-        <div style="font-size:10px;font-weight:bold;color:#166534;margin-bottom:6px;border-bottom:1px solid #d1fae5;padding-bottom:3px;">🔑 DADOS PARA PIX</div>
+        <div style="font-size:10px;font-weight:bold;color:#166534;margin-bottom:6px;border-bottom:1px solid #d1fae5;padding-bottom:3px;">&#128273; DADOS PARA PIX</div>
         <table class="pix-table">
           <tr><td>Meio:</td><td><input type="text" value="PIX"></td></tr>
           <tr><td>Tipo de chave:</td><td><input type="text" value="CNPJ"></td></tr>
@@ -310,135 +313,69 @@ body{font-family:Arial,sans-serif;}
     </div>
   </div>
 
-  <div class="company-footer"><span class="footer-highlight">AGROVOO TECNOLOGIA AGRÍCOLA</span> – Pulverização Inteligente &nbsp;|&nbsp; Rua Tiradentes, 2080 – Assis – SP &nbsp;|&nbsp; agrovoo.tec.br &nbsp;|&nbsp; contato@agrovoo.tec.br &nbsp;|&nbsp; (18) 99706-9421</div>
+  <div class="company-footer"><span class="footer-highlight">AGROVOO TECNOLOGIA AGRICOLA</span> – Pulverizacao Inteligente &nbsp;|&nbsp; Rua Tiradentes, 2080 – Assis – SP &nbsp;|&nbsp; agrovoo.tec.br &nbsp;|&nbsp; contato@agrovoo.tec.br &nbsp;|&nbsp; (18) 99706-9421</div>
   <div class="absolute bottom-3 right-8 text-[9px] text-gray-400">Página 3 de 3</div>
 </div>
 
-</div><!-- fim container -->
+</div>
 
 <script>
-// ── LINHAS DINÂMICAS ─────────────────────────────────────────────────────────
-const MIN_ROWS = 1;
-function updateMinusBtn(tbodyId, btnId) {
-  var tbody = document.getElementById(tbodyId);
-  var btn = document.getElementById(btnId);
-  if (!btn || !tbody) return;
-  btn.disabled = tbody.querySelectorAll('tr').length <= MIN_ROWS;
-}
-function removeRow(tbodyId, btnId) {
-  var tbody = document.getElementById(tbodyId);
-  var rows = tbody.querySelectorAll('tr');
-  if (rows.length <= MIN_ROWS) return;
-  rows[rows.length - 1].remove();
-  updateMinusBtn(tbodyId, btnId);
-}
-function mkTd(){ return '<td><input type="text" value="" style="width:100%;border:none;background:transparent;text-align:center;font-size:10px;outline:none;padding:1px;"></td>'; }
-function addRowAplicacoes() {
-  var tbody = document.getElementById('tbodyAplicacoes');
-  var tr = document.createElement('tr');
-  tr.innerHTML = Array(11).fill('').map(mkTd).join('');
-  tbody.appendChild(tr);
-  updateMinusBtn('tbodyAplicacoes', 'btnMinusApl');
-}
-function addRowReceituario() {
-  var tbody = document.getElementById('tbodyReceituario');
-  var tr = document.createElement('tr');
-  tr.innerHTML = Array(5).fill('').map(mkTd).join('');
-  tbody.appendChild(tr);
-  updateMinusBtn('tbodyReceituario', 'btnMinusRec');
-}
+function autoResize(el){el.style.height='auto';el.style.height=(el.scrollHeight)+'px';}
 
-// ── UPLOAD MAPA ──────────────────────────────────────────────────────────────
-function loadMapImage(event) {
-  var file = event.target.files[0];
-  if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var img = document.getElementById('mapaPreview');
-    var hint = document.getElementById('uploadHint');
-    img.src = e.target.result;
-    img.style.display = 'block';
-    hint.style.display = 'none';
-  };
-  reader.readAsDataURL(file);
-}
-function limparMapa() {
-  var img = document.getElementById('mapaPreview');
-  var hint = document.getElementById('uploadHint');
-  img.src = ''; img.style.display = 'none'; hint.style.display = 'block';
-  document.getElementById('imgInput').value = '';
-}
+const MIN_ROWS=1;
+function updateMinusBtn(tbodyId,btnId){var tb=document.getElementById(tbodyId),b=document.getElementById(btnId);if(!b||!tb)return;b.disabled=tb.querySelectorAll('tr').length<=MIN_ROWS;}
+function removeRow(tbodyId,btnId){var tb=document.getElementById(tbodyId),rows=tb.querySelectorAll('tr');if(rows.length<=MIN_ROWS)return;rows[rows.length-1].remove();updateMinusBtn(tbodyId,btnId);}
+function mkTd(){return'<td><input type="text" value="" style="width:100%;border:none;background:transparent;text-align:center;font-size:10px;outline:none;padding:1px;"></td>';}
+function addRowAplicacoes(){var tb=document.getElementById('tbodyAplicacoes'),tr=document.createElement('tr');tr.innerHTML=Array(11).fill('').map(mkTd).join('');tb.appendChild(tr);updateMinusBtn('tbodyAplicacoes','btnMinusApl');}
+function addRowReceituario(){var tb=document.getElementById('tbodyReceituario'),tr=document.createElement('tr');tr.innerHTML=Array(5).fill('').map(mkTd).join('');tb.appendChild(tr);updateMinusBtn('tbodyReceituario','btnMinusRec');}
 
-// ── DOWNLOAD PDF — página por página, sem folhas em branco ──────────────────
-async function downloadPDF() {
-  var btn = document.getElementById('btnPDF');
-  btn.disabled = true;
-  btn.textContent = '⏳ Gerando PDF...';
+function loadMapImage(event){var file=event.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(e){var img=document.getElementById('mapaPreview'),hint=document.getElementById('uploadHint');img.src=e.target.result;img.style.display='block';hint.style.display='none';};reader.readAsDataURL(file);}
+function limparMapa(){var img=document.getElementById('mapaPreview'),hint=document.getElementById('uploadHint');img.src='';img.style.display='none';hint.style.display='block';document.getElementById('imgInput').value='';}
 
-  // Esconde elementos no-print
-  var noprints = document.querySelectorAll('.no-print');
-  noprints.forEach(function(el){ el.style.display = 'none'; });
-
-  // Substitui inputs/textareas por spans
-  var replacements = [];
-  document.querySelectorAll('.page input, .page textarea').forEach(function(el) {
-    var val = el.value || '';
-    var span = document.createElement('span');
-    span.style.display = 'inline-block';
-    span.style.width = '100%';
-    span.style.fontSize = el.style.fontSize || 'inherit';
-    span.style.fontWeight = el.style.fontWeight || 'inherit';
-    span.style.color = el.style.color || 'inherit';
-    span.style.textAlign = el.style.textAlign || 'left';
-    span.style.wordBreak = 'break-word';
-    span.style.whiteSpace = 'normal';
-    span.style.background = 'transparent';
-    span.textContent = val;
-    el.parentNode.insertBefore(span, el);
-    el.style.display = 'none';
-    replacements.push({ span: span, el: el });
+async function downloadPDF(){
+  var btn=document.getElementById('btnPDF');
+  btn.disabled=true;btn.textContent='Gerando PDF...';
+  var noprints=document.querySelectorAll('.no-print');
+  noprints.forEach(function(el){el.style.display='none';});
+  var replacements=[];
+  document.querySelectorAll('.page input,.page textarea').forEach(function(el){
+    var val=el.value||'';
+    var span=document.createElement('span');
+    span.style.display='inline-block';span.style.width='100%';
+    span.style.fontSize=el.style.fontSize||'inherit';
+    span.style.fontWeight=el.style.fontWeight||'inherit';
+    span.style.color=el.style.color||'inherit';
+    span.style.textAlign=el.style.textAlign||'left';
+    span.style.wordBreak='break-word';span.style.whiteSpace='pre-wrap';
+    span.style.background='transparent';span.style.verticalAlign='top';
+    span.textContent=val;
+    el.parentNode.insertBefore(span,el);el.style.display='none';
+    replacements.push({span:span,el:el});
   });
-
-  await new Promise(function(r){ setTimeout(r, 100); });
-
-  var pages = document.querySelectorAll('.page');
-  var jspdf = window.jspdf;
-  var doc = new jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
-  var pageW = doc.internal.pageSize.getWidth();
-  var pageH = doc.internal.pageSize.getHeight();
-
-  for (var i = 0; i < pages.length; i++) {
-    var canvas = await html2canvas(pages[i], {
-      scale: 2,
-      useCORS: true,
-      logging: false,
-      backgroundColor: '#ffffff',
-      width: pages[i].offsetWidth,
-      height: pages[i].offsetHeight
-    });
-
-    var imgData = canvas.toDataURL('image/jpeg', 0.97);
-    var ratio = canvas.width / canvas.height;
-    var imgW = pageW;
-    var imgH = imgW / ratio;
-
-    if (i > 0) doc.addPage();
-    doc.addImage(imgData, 'JPEG', 0, 0, imgW, Math.min(imgH, pageH));
+  await new Promise(function(r){setTimeout(r,150);});
+  var pages=document.querySelectorAll('.page');
+  var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+  var pw=doc.internal.pageSize.getWidth(),ph=doc.internal.pageSize.getHeight();
+  for(var i=0;i<pages.length;i++){
+    var canvas=await html2canvas(pages[i],{scale:2,useCORS:true,logging:false,backgroundColor:'#ffffff',width:pages[i].offsetWidth,height:pages[i].offsetHeight});
+    var imgData=canvas.toDataURL('image/jpeg',0.97);
+    var ratio=canvas.width/canvas.height;
+    var iw=pw,ih=iw/ratio;
+    if(i>0)doc.addPage();
+    doc.addImage(imgData,'JPEG',0,0,iw,Math.min(ih,ph));
   }
-
-  var ordem = document.getElementById('ordem') ? document.getElementById('ordem').value : 'SN';
-  doc.save('Relatorio_Operacional_AgroVoo_' + ordem + '.pdf');
-
-  // Restaura
-  replacements.forEach(function(r){ r.el.style.display = ''; r.span.remove(); });
-  noprints.forEach(function(el){ el.style.display = ''; });
-  btn.disabled = false;
-  btn.textContent = '📄 Baixar PDF';
+  var ordem=document.getElementById('ordem')?document.getElementById('ordem').value:'SN';
+  doc.save('Relatorio_Operacional_AgroVoo_'+ordem+'.pdf');
+  replacements.forEach(function(r){r.el.style.display='';r.span.remove();});
+  noprints.forEach(function(el){el.style.display='';});
+  btn.disabled=false;btn.textContent='📄 Baixar PDF';
 }
 
-window.onload = function() {
-  updateMinusBtn('tbodyAplicacoes', 'btnMinusApl');
-  updateMinusBtn('tbodyReceituario', 'btnMinusRec');
+window.onload=function(){
+  updateMinusBtn('tbodyAplicacoes','btnMinusApl');
+  updateMinusBtn('tbodyReceituario','btnMinusRec');
+  var obs=document.getElementById('obsTexto');
+  if(obs)autoResize(obs);
 };
 </script>
 </body>
