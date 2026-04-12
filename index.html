@@ -262,16 +262,18 @@ Responsável em campo Matsuda: Sr. André. Copiloto: Caio.
   <div class="absolute bottom-3 right-8 text-[9px] text-gray-400">Página 2 de 3</div>
 </div>
 
-<!-- PAGINA 3 -->
+<!-- PAGINA 3 (TRECHO CORRIGIDO) -->
 <div id="page3" class="page">
   <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #166534;padding-bottom:6px;margin-bottom:10px;">
     <span class="company-logo" style="font-size:20px;">AGROVOO</span>
     <div style="font-size:12px;font-weight:bold;color:#166534;">CROQUI / MAPA DE APLICAÇÕES</div>
   </div>
 
+  <!-- ÁREA DE UPLOAD CORRIGIDA -->
   <div class="upload-area" id="uploadArea" onclick="document.getElementById('imgInput').click()">
     <img id="mapaPreview" src="" alt="" style="display:none;">
-    <div class="upload-hint" id="uploadHint">
+    <!-- ADICIONEI A CLASSE "no-print" NO HINT PARA ELE SUMIR NO PDF -->
+    <div class="upload-hint no-print" id="uploadHint">
       <span>&#128506;</span>
       Clique aqui para importar o mapa do PC<br>
       <span style="font-size:11px;font-weight:normal;color:#555;">(JPG, PNG, etc.)</span>
@@ -279,10 +281,12 @@ Responsável em campo Matsuda: Sr. André. Copiloto: Caio.
   </div>
   <input type="file" id="imgInput" accept="image/*" style="display:none;" onchange="loadMapImage(event)">
 
+  <!-- OS BOTÕES JÁ ESTÃO COM no-print -->
   <div class="no-print" style="text-align:center;margin-top:6px;">
     <button onclick="document.getElementById('imgInput').click()" style="background:#166534;color:white;border:none;padding:6px 18px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:bold;">&#128193; Selecionar imagem</button>
     <button onclick="limparMapa()" style="background:#dc2626;color:white;border:none;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:bold;margin-left:8px;">&#10005; Remover</button>
   </div>
+  <!-- FIM DA CORREÇÃO -->
 
   <div style="text-align:center;font-size:10px;margin-top:6px;color:#444;">
     <input type="text" value="Ordem de Serviço: MATSUDA2606 – Comércio e Indústria Matsuda" style="border:none;border-bottom:1px solid #ccc;outline:none;width:100%;text-align:center;font-size:10px;background:transparent;">
