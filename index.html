@@ -3,11 +3,248 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Relatório Operacional - AgroVoo (Matsuda)</title>
+<title>AgroVoo — Acesso Restrito</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
+:root{
+  --g1:#0a1a0d;
+  --g2:#0d2e12;
+  --accent:#22c55e;
+  --accent2:#4ade80;
+  --dim:#166534;
+  --glow:rgba(34,197,94,0.55);
+  --glow2:rgba(74,222,128,0.18);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+/* ─── LOGIN SCREEN ─── */
+#loginScreen{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--g1);
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+
+/* Animated dot grid */
+#loginScreen::before{
+  content:'';
+  position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(34,197,94,.22) 1px,transparent 1px);
+  background-size:36px 36px;
+  animation:gridMove 12s linear infinite;
+  pointer-events:none;
+}
+@keyframes gridMove{from{background-position:0 0;}to{background-position:36px 36px;}}
+
+/* Scanning line */
+.scan-line{
+  position:absolute;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent 0%,var(--accent) 40%,var(--accent2) 60%,transparent 100%);
+  box-shadow:0 0 18px 4px var(--glow);
+  animation:scanMove 4s linear infinite;
+  pointer-events:none;z-index:1;
+}
+@keyframes scanMove{0%{top:-4px;opacity:0;}5%{opacity:1;}90%{opacity:.7;}100%{top:100%;opacity:0;}}
+
+/* Horizontal light pulses */
+.h-pulse{
+  position:absolute;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent2),transparent);
+  animation:hPulse 6s ease-in-out infinite;
+  pointer-events:none;z-index:1;
+}
+.h-pulse:nth-child(2){top:20%;animation-delay:0s;width:60%;left:20%;}
+.h-pulse:nth-child(3){top:55%;animation-delay:2.5s;width:40%;left:30%;}
+.h-pulse:nth-child(4){top:78%;animation-delay:4s;width:70%;left:15%;}
+@keyframes hPulse{0%,100%{opacity:0;transform:scaleX(.2);}50%{opacity:.5;transform:scaleX(1);}}
+
+/* Corner brackets */
+.corner{position:absolute;width:60px;height:60px;z-index:2;}
+.corner::before,.corner::after{content:'';position:absolute;background:var(--accent);box-shadow:0 0 8px var(--glow);}
+.corner::before{width:100%;height:2px;top:0;left:0;}
+.corner::after{width:2px;height:100%;top:0;left:0;}
+.corner.tl{top:16px;left:16px;}
+.corner.tr{top:16px;right:16px;transform:scaleX(-1);}
+.corner.bl{bottom:16px;left:16px;transform:scaleY(-1);}
+.corner.br{bottom:16px;right:16px;transform:scale(-1);}
+
+/* Login card */
+.login-card{
+  position:relative;z-index:10;
+  width:420px;
+  background:rgba(10,26,13,0.85);
+  border:1px solid rgba(34,197,94,.35);
+  border-radius:4px;
+  padding:44px 44px 40px;
+  box-shadow:0 0 60px rgba(34,197,94,.15),inset 0 1px 0 rgba(34,197,94,.2);
+  backdrop-filter:blur(12px);
+}
+.login-card::before{
+  content:'';
+  position:absolute;top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  box-shadow:0 0 12px var(--glow);
+}
+
+.logo-block{text-align:center;margin-bottom:30px;}
+.logo-hex{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:68px;height:68px;margin-bottom:12px;
+  background:rgba(22,101,52,.3);
+  border:2px solid var(--accent);
+  border-radius:2px;
+  box-shadow:0 0 24px var(--glow),inset 0 0 20px rgba(34,197,94,.08);
+  animation:pulse 3s ease-in-out infinite;
+  transform:rotate(45deg);
+}
+.logo-hex svg{transform:rotate(-45deg);}
+@keyframes pulse{0%,100%{box-shadow:0 0 24px var(--glow),inset 0 0 20px rgba(34,197,94,.08);}50%{box-shadow:0 0 40px rgba(34,197,94,.7),inset 0 0 30px rgba(34,197,94,.15);}}
+
+.logo-name{
+  font-family:'Orbitron',monospace;
+  font-size:26px;font-weight:900;
+  color:var(--accent2);
+  letter-spacing:5px;
+  text-shadow:0 0 20px var(--glow);
+  line-height:1;
+}
+.logo-sub{
+  font-family:'Rajdhani',sans-serif;
+  font-size:11px;font-weight:600;
+  color:rgba(74,222,128,.6);
+  letter-spacing:3px;
+  margin-top:4px;
+  text-transform:uppercase;
+}
+.restricted-badge{
+  display:inline-block;
+  margin-top:10px;
+  padding:3px 14px;
+  background:rgba(34,197,94,.08);
+  border:1px solid rgba(34,197,94,.35);
+  border-radius:2px;
+  font-family:'Orbitron',monospace;
+  font-size:9px;
+  color:var(--accent);
+  letter-spacing:3px;
+}
+
+.field-group{margin-bottom:18px;}
+.field-label{
+  display:block;
+  font-family:'Rajdhani',sans-serif;
+  font-size:11px;font-weight:700;
+  color:rgba(74,222,128,.7);
+  letter-spacing:2px;
+  margin-bottom:6px;
+  text-transform:uppercase;
+}
+.field-wrapper{position:relative;}
+.field-icon{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  color:var(--dim);font-size:14px;
+  pointer-events:none;
+}
+.login-input{
+  width:100%;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(34,197,94,.25);
+  border-radius:3px;
+  padding:12px 14px 12px 38px;
+  color:var(--accent2);
+  font-family:'Rajdhani',sans-serif;
+  font-size:14px;font-weight:600;
+  letter-spacing:1px;
+  outline:none;
+  transition:border-color .3s,box-shadow .3s;
+}
+.login-input::placeholder{color:rgba(74,222,128,.25);}
+.login-input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 16px rgba(34,197,94,.2),inset 0 0 10px rgba(34,197,94,.04);
+  background:rgba(34,197,94,.04);
+}
+
+.btn-login{
+  width:100%;
+  padding:14px;
+  background:transparent;
+  border:1px solid var(--accent);
+  border-radius:3px;
+  color:var(--accent2);
+  font-family:'Orbitron',monospace;
+  font-size:13px;font-weight:700;
+  letter-spacing:3px;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  transition:all .3s;
+  text-transform:uppercase;
+  margin-top:8px;
+}
+.btn-login::before{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent 40%,rgba(34,197,94,.12) 60%,transparent 70%);
+  transform:translateX(-100%);
+  transition:transform .5s;
+}
+.btn-login:hover{
+  background:rgba(34,197,94,.1);
+  box-shadow:0 0 28px rgba(34,197,94,.4);
+  text-shadow:0 0 10px var(--glow);
+}
+.btn-login:hover::before{transform:translateX(100%);}
+.btn-login:active{transform:scale(.98);}
+
+.error-msg{
+  display:none;
+  margin-top:12px;
+  padding:8px 12px;
+  background:rgba(220,38,38,.1);
+  border:1px solid rgba(220,38,38,.4);
+  border-radius:3px;
+  font-family:'Rajdhani',sans-serif;
+  font-size:12px;font-weight:600;
+  color:#f87171;
+  letter-spacing:1px;
+  text-align:center;
+}
+
+.status-bar{
+  display:flex;align-items:center;gap:6px;
+  margin-top:20px;
+  font-family:'Rajdhani',sans-serif;
+  font-size:10px;font-weight:600;
+  color:rgba(74,222,128,.4);
+  letter-spacing:1px;
+  justify-content:center;
+}
+.status-dot{
+  width:6px;height:6px;
+  border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 6px var(--glow);
+  animation:blink 1.5s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+
+/* ─── TRANSITION OVERLAY ─── */
+#transitionOverlay{
+  position:fixed;inset:0;z-index:9998;
+  background:var(--g1);
+  opacity:0;pointer-events:none;
+  transition:opacity .4s;
+}
+
+/* ─── REPORT CONTENT ─── */
+#reportContent{display:none;}
+
+/* ─── ORIGINAL REPORT STYLES ─── */
 body{font-family:Arial,sans-serif;}
 .page{width:210mm;margin:20px auto;background:white;box-shadow:0 0 15px rgba(0,0,0,.15);padding:12mm 12mm 14mm;box-sizing:border-box;position:relative;border:1px solid #e5e7eb;}
 .company-header{display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #166534;padding-bottom:10px;margin-bottom:12px;}
@@ -53,15 +290,79 @@ body{font-family:Arial,sans-serif;}
 .obs-textarea{width:100%;min-height:90px;resize:vertical;border:none;background:transparent;outline:none;font-size:11px;font-family:Arial;line-height:1.7;padding:10px;box-sizing:border-box;color:#222;}
 .obs-textarea::placeholder{color:#aaa;}
 .obs-textarea:focus{background:#f0fdf4;}
-@media print{.no-print{display:none!important;}.page{box-shadow:none;margin:0;padding:12mm 12mm 14mm;}}
+@media print{.no-print{display:none!important;}.page{box-shadow:none;margin:0;padding:12mm 12mm 14mm;}.page + .page { page-break-before: always; }}
 </style>
 </head>
-<body class="bg-gray-200 py-8">
-<div class="max-w-[220mm] mx-auto">
+<body class="bg-gray-200">
+
+<!-- ════════════════ LOGIN SCREEN ════════════════ -->
+<div id="loginScreen">
+  <div class="scan-line"></div>
+  <div class="h-pulse"></div>
+  <div class="h-pulse"></div>
+  <div class="h-pulse"></div>
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+
+  <div class="login-card">
+    <div class="logo-block">
+      <div class="logo-hex">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+          <path d="M18 4L32 12V24L18 32L4 24V12L18 4Z" stroke="#22c55e" stroke-width="1.5" fill="rgba(34,197,94,0.1)"/>
+          <path d="M18 10L26 15V22L18 27L10 22V15L18 10Z" fill="rgba(34,197,94,0.2)" stroke="#4ade80" stroke-width="1"/>
+          <circle cx="18" cy="18" r="4" fill="#22c55e" opacity=".9"/>
+          <line x1="18" y1="4" x2="18" y2="10" stroke="#22c55e" stroke-width="1.5"/>
+          <line x1="18" y1="26" x2="18" y2="32" stroke="#22c55e" stroke-width="1.5"/>
+          <line x1="4" y1="12" x2="10" y2="15" stroke="#22c55e" stroke-width="1.5"/>
+          <line x1="26" y1="21" x2="32" y2="24" stroke="#22c55e" stroke-width="1.5"/>
+          <line x1="32" y1="12" x2="26" y2="15" stroke="#22c55e" stroke-width="1.5"/>
+          <line x1="10" y1="21" x2="4" y2="24" stroke="#22c55e" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="logo-name">AGROVOO</div>
+      <div class="logo-sub">Tecnologia Agrícola</div>
+      <div class="restricted-badge">◈ ÁREA EXCLUSIVA</div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="inputUser">&#9655; Usuário</label>
+      <div class="field-wrapper">
+        <span class="field-icon">◈</span>
+        <input class="login-input" id="inputUser" type="text" placeholder="identificação operacional" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="inputPass">&#9655; Senha de Acesso</label>
+      <div class="field-wrapper">
+        <span class="field-icon">&#9670;</span>
+        <input class="login-input" id="inputPass" type="password" placeholder="••••••••••••" autocomplete="off">
+      </div>
+    </div>
+
+    <button class="btn-login" onclick="doLogin()">◈ &nbsp; ACESSAR SISTEMA</button>
+
+    <div class="error-msg" id="errorMsg">⚠ &nbsp; CREDENCIAIS INVÁLIDAS — ACESSO NEGADO</div>
+
+    <div class="status-bar">
+      <span class="status-dot"></span>
+      SISTEMA OPERACIONAL &nbsp;·&nbsp; AGROVOO v2.0
+    </div>
+  </div>
+</div>
+
+<div id="transitionOverlay"></div>
+
+<!-- ════════════════ REPORT ════════════════ -->
+<div id="reportContent">
+<div class="max-w-[220mm] mx-auto py-8">
 
 <div class="flex justify-center gap-3 mb-6 no-print">
   <button onclick="downloadPDF()" id="btnPDF" class="bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-lg font-bold shadow-lg">&#128196; Baixar PDF</button>
   <button onclick="window.print()" class="bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-bold shadow-lg">&#128424; Imprimir</button>
+  <button onclick="doLogout()" class="bg-red-700 hover:bg-red-800 text-white px-6 py-3 rounded-lg font-bold shadow-lg no-print">&#9665; Sair</button>
 </div>
 
 <!-- PAGINA 1 -->
@@ -190,7 +491,7 @@ body{font-family:Arial,sans-serif;}
     <div style="font-size:12px;font-weight:bold;color:#166534;">RELATÓRIO OPERACIONAL — Ordem N° <input type="text" value="MATSUDA2606" style="border:none;border-bottom:1px solid #166534;outline:none;width:70px;font-size:11px;background:transparent;font-weight:bold;"></div>
   </div>
 
-  <div class="section-title">Observações / Relato da Operação</div>
+  <div style="page-break-inside: avoid;"><div class="section-title">Observações / Relato da Operação</div>
   <div style="background:#f9fafb;border:1px solid #d1fae5;border-top:none;margin-bottom:8px;">
     <textarea id="obsTexto" oninput="autoResize(this)" class="obs-textarea" placeholder="Digite aqui suas observações...">
 [09/04/2026] Equipe chegou à área às 06h30. Operação iniciada no Sítio (27 ha) e depois Pivô (24 ha). Total: 51 ha.
@@ -199,7 +500,7 @@ Temperatura: 22°C (início) → 30°C (final). Vento: 0 km/h inicial, com rajad
 Objetivo: Controle de lagartas e insetos secundários com inseticidas e biológicos. Preservação do capim.
 Responsável em campo Matsuda: Sr. André. Copiloto: Caio.
     </textarea>
-  </div>
+  </div></div>
 
   <div class="section-title">Resumo Financeiro</div>
   <div style="border:1px solid #d1fae5;border-top:none;padding:10px;background:#f9fafb;margin-bottom:8px;">
@@ -262,17 +563,15 @@ Responsável em campo Matsuda: Sr. André. Copiloto: Caio.
   <div class="absolute bottom-3 right-8 text-[9px] text-gray-400">Página 2 de 3</div>
 </div>
 
-<!-- PAGINA 3 (TRECHO CORRIGIDO) -->
+<!-- PAGINA 3 -->
 <div id="page3" class="page">
   <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #166534;padding-bottom:6px;margin-bottom:10px;">
     <span class="company-logo" style="font-size:20px;">AGROVOO</span>
     <div style="font-size:12px;font-weight:bold;color:#166534;">CROQUI / MAPA DE APLICAÇÕES</div>
   </div>
 
-  <!-- ÁREA DE UPLOAD CORRIGIDA -->
   <div class="upload-area" id="uploadArea" onclick="document.getElementById('imgInput').click()">
     <img id="mapaPreview" src="" alt="" style="display:none;">
-    <!-- ADICIONEI A CLASSE "no-print" NO HINT PARA ELE SUMIR NO PDF -->
     <div class="upload-hint no-print" id="uploadHint">
       <span>&#128506;</span>
       Clique aqui para importar o mapa do PC<br>
@@ -281,12 +580,10 @@ Responsável em campo Matsuda: Sr. André. Copiloto: Caio.
   </div>
   <input type="file" id="imgInput" accept="image/*" style="display:none;" onchange="loadMapImage(event)">
 
-  <!-- OS BOTÕES JÁ ESTÃO COM no-print -->
   <div class="no-print" style="text-align:center;margin-top:6px;">
     <button onclick="document.getElementById('imgInput').click()" style="background:#166534;color:white;border:none;padding:6px 18px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:bold;">&#128193; Selecionar imagem</button>
     <button onclick="limparMapa()" style="background:#dc2626;color:white;border:none;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:bold;margin-left:8px;">&#10005; Remover</button>
   </div>
-  <!-- FIM DA CORREÇÃO -->
 
   <div style="text-align:center;font-size:10px;margin-top:6px;color:#444;">
     <input type="text" value="Ordem de Serviço: MATSUDA2606 – Comércio e Indústria Matsuda" style="border:none;border-bottom:1px solid #ccc;outline:none;width:100%;text-align:center;font-size:10px;background:transparent;">
@@ -326,18 +623,69 @@ Responsável em campo Matsuda: Sr. André. Copiloto: Caio.
   <div class="absolute bottom-3 right-8 text-[9px] text-gray-400">Página 3 de 3</div>
 </div>
 
-</div>
+</div><!-- max-w -->
+</div><!-- reportContent -->
 
 <script>
-function autoResize(el){el.style.height='auto';el.style.height=(el.scrollHeight)+'px';}
+/* ── LOGIN ── */
+function doLogin(){
+  var u=document.getElementById('inputUser').value.trim();
+  var p=document.getElementById('inputPass').value.trim();
+  var err=document.getElementById('errorMsg');
+  if(u==='operacional' && p==='@agrovoo2025'){
+    err.style.display='none';
+    var ov=document.getElementById('transitionOverlay');
+    ov.style.opacity='1';
+    ov.style.pointerEvents='all';
+    setTimeout(function(){
+      document.getElementById('loginScreen').style.display='none';
+      document.getElementById('reportContent').style.display='block';
+      document.body.style.backgroundColor='#e5e7eb';
+      ov.style.opacity='0';
+      setTimeout(function(){ov.style.pointerEvents='none';},500);
+      var obs=document.getElementById('obsTexto');
+      if(obs)autoResize(obs);
+      updateMinusBtn('tbodyAplicacoes','btnMinusApl');
+      updateMinusBtn('tbodyReceituario','btnMinusRec');
+    },500);
+  } else {
+    err.style.display='block';
+    var card=document.querySelector('.login-card');
+    card.style.animation='shake .4s ease';
+    setTimeout(function(){card.style.animation='';},400);
+    document.getElementById('inputPass').value='';
+  }
+}
 
-const MIN_ROWS=1;
+function doLogout(){
+  document.getElementById('reportContent').style.display='none';
+  document.body.style.backgroundColor='';
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('inputUser').value='';
+  document.getElementById('inputPass').value='';
+  document.getElementById('errorMsg').style.display='none';
+}
+
+/* Enter key support */
+document.addEventListener('DOMContentLoaded',function(){
+  ['inputUser','inputPass'].forEach(function(id){
+    document.getElementById(id).addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+  });
+});
+
+/* Shake animation */
+var shakeStyle=document.createElement('style');
+shakeStyle.textContent='@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-8px)}80%{transform:translateX(8px)}}';
+document.head.appendChild(shakeStyle);
+
+/* ── REPORT FUNCTIONS ── */
+function autoResize(el){el.style.height='auto';el.style.height=(el.scrollHeight)+'px';}
+var MIN_ROWS=1;
 function updateMinusBtn(tbodyId,btnId){var tb=document.getElementById(tbodyId),b=document.getElementById(btnId);if(!b||!tb)return;b.disabled=tb.querySelectorAll('tr').length<=MIN_ROWS;}
 function removeRow(tbodyId,btnId){var tb=document.getElementById(tbodyId),rows=tb.querySelectorAll('tr');if(rows.length<=MIN_ROWS)return;rows[rows.length-1].remove();updateMinusBtn(tbodyId,btnId);}
 function mkTd(){return'<td><input type="text" value="" style="width:100%;border:none;background:transparent;text-align:center;font-size:10px;outline:none;padding:1px;"></td>';}
 function addRowAplicacoes(){var tb=document.getElementById('tbodyAplicacoes'),tr=document.createElement('tr');tr.innerHTML=Array(11).fill('').map(mkTd).join('');tb.appendChild(tr);updateMinusBtn('tbodyAplicacoes','btnMinusApl');}
 function addRowReceituario(){var tb=document.getElementById('tbodyReceituario'),tr=document.createElement('tr');tr.innerHTML=Array(5).fill('').map(mkTd).join('');tb.appendChild(tr);updateMinusBtn('tbodyReceituario','btnMinusRec');}
-
 function loadMapImage(event){var file=event.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(e){var img=document.getElementById('mapaPreview'),hint=document.getElementById('uploadHint');img.src=e.target.result;img.style.display='block';hint.style.display='none';};reader.readAsDataURL(file);}
 function limparMapa(){var img=document.getElementById('mapaPreview'),hint=document.getElementById('uploadHint');img.src='';img.style.display='none';hint.style.display='block';document.getElementById('imgInput').value='';}
 
@@ -379,13 +727,6 @@ async function downloadPDF(){
   noprints.forEach(function(el){el.style.display='';});
   btn.disabled=false;btn.textContent='📄 Baixar PDF';
 }
-
-window.onload=function(){
-  updateMinusBtn('tbodyAplicacoes','btnMinusApl');
-  updateMinusBtn('tbodyReceituario','btnMinusRec');
-  var obs=document.getElementById('obsTexto');
-  if(obs)autoResize(obs);
-};
 </script>
 </body>
 </html>
