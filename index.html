@@ -1,732 +1,1544 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AgroVoo — Acesso Restrito</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<style>
-:root{
-  --g1:#0a1a0d;
-  --g2:#0d2e12;
-  --accent:#22c55e;
-  --accent2:#4ade80;
-  --dim:#166534;
-  --glow:rgba(34,197,94,0.55);
-  --glow2:rgba(74,222,128,0.18);
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroVoo — Acesso Restrito</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --g1: #0a1a0d;
+            --g2: #0d2e12;
+            --accent: #22c55e;
+            --accent2: #4ade80;
+            --dim: #166534;
+            --glow: rgba(34, 197, 94, 0.55);
+            --glow2: rgba(74, 222, 128, 0.18);
+        }
 
-*{box-sizing:border-box;margin:0;padding:0;}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-/* ─── LOGIN SCREEN ─── */
-#loginScreen{
-  position:fixed;inset:0;z-index:9999;
-  background:var(--g1);
-  display:flex;align-items:center;justify-content:center;
-  overflow:hidden;
-}
+        /* ─── LOGIN SCREEN ─── */
+        #loginScreen {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: var(--g1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
 
-/* Animated dot grid */
-#loginScreen::before{
-  content:'';
-  position:absolute;inset:0;
-  background-image:radial-gradient(circle,rgba(34,197,94,.22) 1px,transparent 1px);
-  background-size:36px 36px;
-  animation:gridMove 12s linear infinite;
-  pointer-events:none;
-}
-@keyframes gridMove{from{background-position:0 0;}to{background-position:36px 36px;}}
+        #loginScreen::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(34, 197, 94, .22) 1px, transparent 1px);
+            background-size: 36px 36px;
+            animation: gridMove 12s linear infinite;
+            pointer-events: none;
+        }
 
-/* Scanning line */
-.scan-line{
-  position:absolute;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent 0%,var(--accent) 40%,var(--accent2) 60%,transparent 100%);
-  box-shadow:0 0 18px 4px var(--glow);
-  animation:scanMove 4s linear infinite;
-  pointer-events:none;z-index:1;
-}
-@keyframes scanMove{0%{top:-4px;opacity:0;}5%{opacity:1;}90%{opacity:.7;}100%{top:100%;opacity:0;}}
+        @keyframes gridMove {
+            from {
+                background-position: 0 0;
+            }
 
-/* Horizontal light pulses */
-.h-pulse{
-  position:absolute;height:1px;
-  background:linear-gradient(90deg,transparent,var(--accent2),transparent);
-  animation:hPulse 6s ease-in-out infinite;
-  pointer-events:none;z-index:1;
-}
-.h-pulse:nth-child(2){top:20%;animation-delay:0s;width:60%;left:20%;}
-.h-pulse:nth-child(3){top:55%;animation-delay:2.5s;width:40%;left:30%;}
-.h-pulse:nth-child(4){top:78%;animation-delay:4s;width:70%;left:15%;}
-@keyframes hPulse{0%,100%{opacity:0;transform:scaleX(.2);}50%{opacity:.5;transform:scaleX(1);}}
+            to {
+                background-position: 36px 36px;
+            }
+        }
 
-/* Corner brackets */
-.corner{position:absolute;width:60px;height:60px;z-index:2;}
-.corner::before,.corner::after{content:'';position:absolute;background:var(--accent);box-shadow:0 0 8px var(--glow);}
-.corner::before{width:100%;height:2px;top:0;left:0;}
-.corner::after{width:2px;height:100%;top:0;left:0;}
-.corner.tl{top:16px;left:16px;}
-.corner.tr{top:16px;right:16px;transform:scaleX(-1);}
-.corner.bl{bottom:16px;left:16px;transform:scaleY(-1);}
-.corner.br{bottom:16px;right:16px;transform:scale(-1);}
+        .scan-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, var(--accent) 40%, var(--accent2) 60%, transparent 100%);
+            box-shadow: 0 0 18px 4px var(--glow);
+            animation: scanMove 4s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
 
-/* Login card */
-.login-card{
-  position:relative;z-index:10;
-  width:420px;
-  background:rgba(10,26,13,0.85);
-  border:1px solid rgba(34,197,94,.35);
-  border-radius:4px;
-  padding:44px 44px 40px;
-  box-shadow:0 0 60px rgba(34,197,94,.15),inset 0 1px 0 rgba(34,197,94,.2);
-  backdrop-filter:blur(12px);
-}
-.login-card::before{
-  content:'';
-  position:absolute;top:0;left:10%;right:10%;height:1px;
-  background:linear-gradient(90deg,transparent,var(--accent),transparent);
-  box-shadow:0 0 12px var(--glow);
-}
+        @keyframes scanMove {
+            0% {
+                top: -4px;
+                opacity: 0;
+            }
 
-.logo-block{text-align:center;margin-bottom:30px;}
-.logo-hex{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:68px;height:68px;margin-bottom:12px;
-  background:rgba(22,101,52,.3);
-  border:2px solid var(--accent);
-  border-radius:2px;
-  box-shadow:0 0 24px var(--glow),inset 0 0 20px rgba(34,197,94,.08);
-  animation:pulse 3s ease-in-out infinite;
-  transform:rotate(45deg);
-}
-.logo-hex svg{transform:rotate(-45deg);}
-@keyframes pulse{0%,100%{box-shadow:0 0 24px var(--glow),inset 0 0 20px rgba(34,197,94,.08);}50%{box-shadow:0 0 40px rgba(34,197,94,.7),inset 0 0 30px rgba(34,197,94,.15);}}
+            5% {
+                opacity: 1;
+            }
 
-.logo-name{
-  font-family:'Orbitron',monospace;
-  font-size:26px;font-weight:900;
-  color:var(--accent2);
-  letter-spacing:5px;
-  text-shadow:0 0 20px var(--glow);
-  line-height:1;
-}
-.logo-sub{
-  font-family:'Rajdhani',sans-serif;
-  font-size:11px;font-weight:600;
-  color:rgba(74,222,128,.6);
-  letter-spacing:3px;
-  margin-top:4px;
-  text-transform:uppercase;
-}
-.restricted-badge{
-  display:inline-block;
-  margin-top:10px;
-  padding:3px 14px;
-  background:rgba(34,197,94,.08);
-  border:1px solid rgba(34,197,94,.35);
-  border-radius:2px;
-  font-family:'Orbitron',monospace;
-  font-size:9px;
-  color:var(--accent);
-  letter-spacing:3px;
-}
+            90% {
+                opacity: .7;
+            }
 
-.field-group{margin-bottom:18px;}
-.field-label{
-  display:block;
-  font-family:'Rajdhani',sans-serif;
-  font-size:11px;font-weight:700;
-  color:rgba(74,222,128,.7);
-  letter-spacing:2px;
-  margin-bottom:6px;
-  text-transform:uppercase;
-}
-.field-wrapper{position:relative;}
-.field-icon{
-  position:absolute;left:12px;top:50%;transform:translateY(-50%);
-  color:var(--dim);font-size:14px;
-  pointer-events:none;
-}
-.login-input{
-  width:100%;
-  background:rgba(255,255,255,.03);
-  border:1px solid rgba(34,197,94,.25);
-  border-radius:3px;
-  padding:12px 14px 12px 38px;
-  color:var(--accent2);
-  font-family:'Rajdhani',sans-serif;
-  font-size:14px;font-weight:600;
-  letter-spacing:1px;
-  outline:none;
-  transition:border-color .3s,box-shadow .3s;
-}
-.login-input::placeholder{color:rgba(74,222,128,.25);}
-.login-input:focus{
-  border-color:var(--accent);
-  box-shadow:0 0 16px rgba(34,197,94,.2),inset 0 0 10px rgba(34,197,94,.04);
-  background:rgba(34,197,94,.04);
-}
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
 
-.btn-login{
-  width:100%;
-  padding:14px;
-  background:transparent;
-  border:1px solid var(--accent);
-  border-radius:3px;
-  color:var(--accent2);
-  font-family:'Orbitron',monospace;
-  font-size:13px;font-weight:700;
-  letter-spacing:3px;
-  cursor:pointer;
-  position:relative;
-  overflow:hidden;
-  transition:all .3s;
-  text-transform:uppercase;
-  margin-top:8px;
-}
-.btn-login::before{
-  content:'';
-  position:absolute;inset:0;
-  background:linear-gradient(135deg,transparent 40%,rgba(34,197,94,.12) 60%,transparent 70%);
-  transform:translateX(-100%);
-  transition:transform .5s;
-}
-.btn-login:hover{
-  background:rgba(34,197,94,.1);
-  box-shadow:0 0 28px rgba(34,197,94,.4);
-  text-shadow:0 0 10px var(--glow);
-}
-.btn-login:hover::before{transform:translateX(100%);}
-.btn-login:active{transform:scale(.98);}
+        .h-pulse {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent2), transparent);
+            animation: hPulse 6s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
 
-.error-msg{
-  display:none;
-  margin-top:12px;
-  padding:8px 12px;
-  background:rgba(220,38,38,.1);
-  border:1px solid rgba(220,38,38,.4);
-  border-radius:3px;
-  font-family:'Rajdhani',sans-serif;
-  font-size:12px;font-weight:600;
-  color:#f87171;
-  letter-spacing:1px;
-  text-align:center;
-}
+        .h-pulse:nth-child(2) {
+            top: 20%;
+            animation-delay: 0s;
+            width: 60%;
+            left: 20%;
+        }
 
-.status-bar{
-  display:flex;align-items:center;gap:6px;
-  margin-top:20px;
-  font-family:'Rajdhani',sans-serif;
-  font-size:10px;font-weight:600;
-  color:rgba(74,222,128,.4);
-  letter-spacing:1px;
-  justify-content:center;
-}
-.status-dot{
-  width:6px;height:6px;
-  border-radius:50%;
-  background:var(--accent);
-  box-shadow:0 0 6px var(--glow);
-  animation:blink 1.5s ease-in-out infinite;
-}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+        .h-pulse:nth-child(3) {
+            top: 55%;
+            animation-delay: 2.5s;
+            width: 40%;
+            left: 30%;
+        }
 
-/* ─── TRANSITION OVERLAY ─── */
-#transitionOverlay{
-  position:fixed;inset:0;z-index:9998;
-  background:var(--g1);
-  opacity:0;pointer-events:none;
-  transition:opacity .4s;
-}
+        .h-pulse:nth-child(4) {
+            top: 78%;
+            animation-delay: 4s;
+            width: 70%;
+            left: 15%;
+        }
 
-/* ─── REPORT CONTENT ─── */
-#reportContent{display:none;}
+        @keyframes hPulse {
 
-/* ─── ORIGINAL REPORT STYLES ─── */
-body{font-family:Arial,sans-serif;}
-.page{width:210mm;margin:20px auto;background:white;box-shadow:0 0 15px rgba(0,0,0,.15);padding:12mm 12mm 14mm;box-sizing:border-box;position:relative;border:1px solid #e5e7eb;}
-.company-header{display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #166534;padding-bottom:10px;margin-bottom:12px;}
-.company-logo{font-size:32px;font-weight:900;color:#166534;letter-spacing:2px;line-height:1;}
-.company-sub{font-size:9px;font-weight:bold;color:#166534;letter-spacing:1px;margin-top:2px;}
-.report-title{font-size:18px;font-weight:900;color:#166534;letter-spacing:2px;}
-.report-order{font-size:11px;color:#444;margin-top:2px;text-align:center;}
-.company-contact{font-size:8.5px;color:#444;text-align:right;line-height:1.6;}
-.section-title{background-color:#166534;color:white;padding:5px 10px;font-weight:bold;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:0;}
-.info-box{border:1px solid #d1fae5;border-top:none;padding:8px 10px;background:#f9fafb;margin-bottom:8px;}
-.info-row{display:flex;align-items:center;border-bottom:1px solid #e5e7eb;min-height:22px;font-size:11px;}
-.info-row:last-child{border-bottom:none;}
-.info-label{font-weight:bold;color:#166534;width:130px;min-width:130px;font-size:10.5px;}
-.info-value{flex:1;}
-.info-value input{border:none;background:transparent;font-size:11px;outline:none;padding:1px 4px;width:100%;}
-.info-value input:focus{background:#ecfdf5;border-bottom:1px dashed #166534;}
-.grid-2col{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.grid-3col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
-.table-report{width:100%;border-collapse:collapse;font-size:10px;}
-.table-report th,.table-report td{border:1px solid #166534;padding:3px 5px;text-align:center;vertical-align:middle;}
-.table-report th{background-color:#166534;color:white;font-weight:bold;}
-.table-report input{width:100%;border:none;background:transparent;text-align:center;font-size:10px;outline:none;padding:1px;}
-.table-report input:focus{background:#ecfdf5;}
-.company-footer{border-top:2px solid #166534;padding-top:6px;margin-top:10px;text-align:center;font-size:8.5px;color:#444;line-height:1.7;}
-.footer-highlight{font-weight:bold;color:#166534;font-size:9px;}
-.sig-line{border-top:1px solid #333;width:180px;margin:36px auto 5px;}
-.upload-area{border:2px dashed #166534;background:#f0fdf4;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;}
-.upload-area:hover{background:#dcfce7;}
-.upload-area img{width:100%;height:100%;object-fit:contain;position:absolute;top:0;left:0;}
-.upload-hint{color:#166534;font-size:13px;font-weight:bold;text-align:center;z-index:1;}
-.upload-hint span{font-size:36px;display:block;}
-.pix-table{width:100%;font-size:11px;border-collapse:collapse;}
-.pix-table td{padding:4px 6px;border-bottom:1px solid #d1fae5;}
-.pix-table td:first-child{font-weight:bold;color:#166534;width:160px;white-space:nowrap;}
-.pix-table input{border:none;background:transparent;outline:none;font-size:11px;width:100%;}
-.row-btn{width:26px;height:26px;border-radius:50%;color:white;border:none;font-size:18px;font-weight:bold;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center;transition:opacity .2s,background .2s;}
-.row-btn:disabled{background:#9ca3af!important;cursor:not-allowed;opacity:.5;}
-.btn-add{background:#166534;}.btn-add:hover{background:#14532d;}
-.btn-remove{background:#dc2626;}.btn-remove:hover:not(:disabled){background:#b91c1c;}
-.table-header-row{display:flex;align-items:center;justify-content:space-between;}
-.table-header-row .section-title{flex:1;}
-.table-btns{display:flex;gap:5px;margin-left:8px;}
-.obs-textarea{width:100%;min-height:90px;resize:vertical;border:none;background:transparent;outline:none;font-size:11px;font-family:Arial;line-height:1.7;padding:10px;box-sizing:border-box;color:#222;}
-.obs-textarea::placeholder{color:#aaa;}
-.obs-textarea:focus{background:#f0fdf4;}
-@media print{.no-print{display:none!important;}.page{box-shadow:none;margin:0;padding:12mm 12mm 14mm;}.page + .page { page-break-before: always; }}
-</style>
+            0%,
+            100% {
+                opacity: 0;
+                transform: scaleX(.2);
+            }
+
+            50% {
+                opacity: .5;
+                transform: scaleX(1);
+            }
+        }
+
+        .corner {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            z-index: 2;
+        }
+
+        .corner::before,
+        .corner::after {
+            content: '';
+            position: absolute;
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--glow);
+        }
+
+        .corner::before {
+            width: 100%;
+            height: 2px;
+            top: 0;
+            left: 0;
+        }
+
+        .corner::after {
+            width: 2px;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .corner.tl {
+            top: 16px;
+            left: 16px;
+        }
+
+        .corner.tr {
+            top: 16px;
+            right: 16px;
+            transform: scaleX(-1);
+        }
+
+        .corner.bl {
+            bottom: 16px;
+            left: 16px;
+            transform: scaleY(-1);
+        }
+
+        .corner.br {
+            bottom: 16px;
+            right: 16px;
+            transform: scale(-1);
+        }
+
+        .login-card {
+            position: relative;
+            z-index: 10;
+            width: 420px;
+            background: rgba(10, 26, 13, 0.85);
+            border: 1px solid rgba(34, 197, 94, .35);
+            border-radius: 4px;
+            padding: 44px 44px 40px;
+            box-shadow: 0 0 60px rgba(34, 197, 94, .15), inset 0 1px 0 rgba(34, 197, 94, .2);
+            backdrop-filter: blur(12px);
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            box-shadow: 0 0 12px var(--glow);
+        }
+
+        .logo-block {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-hex {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 68px;
+            height: 68px;
+            margin-bottom: 12px;
+            background: rgba(22, 101, 52, .3);
+            border: 2px solid var(--accent);
+            border-radius: 2px;
+            box-shadow: 0 0 24px var(--glow), inset 0 0 20px rgba(34, 197, 94, .08);
+            animation: pulse 3s ease-in-out infinite;
+            transform: rotate(45deg);
+        }
+
+        .logo-hex svg {
+            transform: rotate(-45deg);
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 24px var(--glow), inset 0 0 20px rgba(34, 197, 94, .08);
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(34, 197, 94, .7), inset 0 0 30px rgba(34, 197, 94, .15);
+            }
+        }
+
+        .logo-name {
+            font-family: 'Orbitron', monospace;
+            font-size: 26px;
+            font-weight: 900;
+            color: var(--accent2);
+            letter-spacing: 5px;
+            text-shadow: 0 0 20px var(--glow);
+            line-height: 1;
+        }
+
+        .logo-sub {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(74, 222, 128, .6);
+            letter-spacing: 3px;
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+
+        .restricted-badge {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 3px 14px;
+            background: rgba(34, 197, 94, .08);
+            border: 1px solid rgba(34, 197, 94, .35);
+            border-radius: 2px;
+            font-family: 'Orbitron', monospace;
+            font-size: 9px;
+            color: var(--accent);
+            letter-spacing: 3px;
+        }
+
+        .field-group {
+            margin-bottom: 18px;
+        }
+
+        .field-label {
+            display: block;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            color: rgba(74, 222, 128, .7);
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .field-wrapper {
+            position: relative;
+        }
+
+        .field-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dim);
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .login-input {
+            width: 100%;
+            background: rgba(255, 255, 255, .03);
+            border: 1px solid rgba(34, 197, 94, .25);
+            border-radius: 3px;
+            padding: 12px 14px 12px 38px;
+            color: var(--accent2);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            outline: none;
+            transition: border-color .3s, box-shadow .3s;
+        }
+
+        .login-input::placeholder {
+            color: rgba(74, 222, 128, .25);
+        }
+
+        .login-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 16px rgba(34, 197, 94, .2), inset 0 0 10px rgba(34, 197, 94, .04);
+            background: rgba(34, 197, 94, .04);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            border: 1px solid var(--accent);
+            border-radius: 3px;
+            color: var(--accent2);
+            font-family: 'Orbitron', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all .3s;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 40%, rgba(34, 197, 94, .12) 60%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform .5s;
+        }
+
+        .btn-login:hover {
+            background: rgba(34, 197, 94, .1);
+            box-shadow: 0 0 28px rgba(34, 197, 94, .4);
+            text-shadow: 0 0 10px var(--glow);
+        }
+
+        .btn-login:hover::before {
+            transform: translateX(100%);
+        }
+
+        .btn-login:active {
+            transform: scale(.98);
+        }
+
+        .error-msg {
+            display: none;
+            margin-top: 12px;
+            padding: 8px 12px;
+            background: rgba(220, 38, 38, .1);
+            border: 1px solid rgba(220, 38, 38, .4);
+            border-radius: 3px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: #f87171;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 20px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            color: rgba(74, 222, 128, .4);
+            letter-spacing: 1px;
+            justify-content: center;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 6px var(--glow);
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: .2;
+            }
+        }
+
+        /* ─── TRANSITION OVERLAY ─── */
+        #transitionOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            background: var(--g1);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .4s;
+        }
+
+        /* ─── REPORT CONTENT ─── */
+        #reportContent {
+            display: none;
+        }
+
+        /* ─── ORIGINAL REPORT STYLES ─── */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .page {
+            width: 210mm;
+            margin: 20px auto;
+            background: white;
+            box-shadow: 0 0 15px rgba(0, 0, 0, .15);
+            padding: 12mm 12mm 14mm;
+            box-sizing: border-box;
+            position: relative;
+            border: 1px solid #e5e7eb;
+        }
+
+        .company-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 3px solid #166534;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+
+        .company-logo {
+            font-size: 32px;
+            font-weight: 900;
+            color: #166534;
+            letter-spacing: 2px;
+            line-height: 1;
+        }
+
+        .company-sub {
+            font-size: 9px;
+            font-weight: bold;
+            color: #166534;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        .report-title {
+            font-size: 18px;
+            font-weight: 900;
+            color: #166534;
+            letter-spacing: 2px;
+        }
+
+        .report-order {
+            font-size: 11px;
+            color: #444;
+            margin-top: 2px;
+            text-align: center;
+        }
+
+        .company-contact {
+            font-size: 8.5px;
+            color: #444;
+            text-align: right;
+            line-height: 1.6;
+        }
+
+        .section-title {
+            background-color: #166534;
+            color: white;
+            padding: 5px 10px;
+            font-weight: bold;
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 0;
+        }
+
+        .info-box {
+            border: 1px solid #d1fae5;
+            border-top: none;
+            padding: 8px 10px;
+            background: #f9fafb;
+            margin-bottom: 8px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #e5e7eb;
+            min-height: 22px;
+            font-size: 11px;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #166534;
+            width: 130px;
+            min-width: 130px;
+            font-size: 10.5px;
+        }
+
+        .info-value {
+            flex: 1;
+        }
+
+        .info-value input {
+            border: none;
+            background: transparent;
+            font-size: 11px;
+            outline: none;
+            padding: 1px 4px;
+            width: 100%;
+        }
+
+        .info-value input:focus {
+            background: #ecfdf5;
+            border-bottom: 1px dashed #166534;
+        }
+
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .grid-3col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+
+        .table-report {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
+
+        .table-report th,
+        .table-report td {
+            border: 1px solid #166534;
+            padding: 3px 5px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .table-report th {
+            background-color: #166534;
+            color: white;
+            font-weight: bold;
+        }
+
+        .table-report input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: center;
+            font-size: 10px;
+            outline: none;
+            padding: 1px;
+        }
+
+        .table-report input:focus {
+            background: #ecfdf5;
+        }
+
+        .company-footer {
+            border-top: 2px solid #166534;
+            padding-top: 6px;
+            margin-top: 10px;
+            text-align: center;
+            font-size: 8.5px;
+            color: #444;
+            line-height: 1.7;
+        }
+
+        .footer-highlight {
+            font-weight: bold;
+            color: #166534;
+            font-size: 9px;
+        }
+
+        .sig-line {
+            border-top: 1px solid #333;
+            width: 180px;
+            margin: 36px auto 5px;
+        }
+
+        .upload-area {
+            border: 2px dashed #166534;
+            background: #f0fdf4;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area:hover {
+            background: #dcfce7;
+        }
+
+        .upload-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .upload-hint {
+            color: #166534;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .upload-hint span {
+            font-size: 36px;
+            display: block;
+        }
+
+        .pix-table {
+            width: 100%;
+            font-size: 11px;
+            border-collapse: collapse;
+        }
+
+        .pix-table td {
+            padding: 4px 6px;
+            border-bottom: 1px solid #d1fae5;
+        }
+
+        .pix-table td:first-child {
+            font-weight: bold;
+            color: #166534;
+            width: 160px;
+            white-space: nowrap;
+        }
+
+        .pix-table input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 11px;
+            width: 100%;
+        }
+
+        .row-btn {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            color: white;
+            border: none;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity .2s, background .2s;
+        }
+
+        .row-btn:disabled {
+            background: #9ca3af !important;
+            cursor: not-allowed;
+            opacity: .5;
+        }
+
+        .btn-add {
+            background: #166534;
+        }
+
+        .btn-add:hover {
+            background: #14532d;
+        }
+
+        .btn-remove {
+            background: #dc2626;
+        }
+
+        .btn-remove:hover:not(:disabled) {
+            background: #b91c1c;
+        }
+
+        .table-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .table-header-row .section-title {
+            flex: 1;
+        }
+
+        .table-btns {
+            display: flex;
+            gap: 5px;
+            margin-left: 8px;
+        }
+
+        .obs-textarea {
+            width: 100%;
+            min-height: 90px;
+            resize: vertical;
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 11px;
+            font-family: Arial;
+            line-height: 1.7;
+            padding: 10px;
+            box-sizing: border-box;
+            color: #222;
+        }
+
+        .obs-textarea::placeholder {
+            color: #aaa;
+        }
+
+        .obs-textarea:focus {
+            background: #f0fdf4;
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+
+            .page {
+                box-shadow: none;
+                margin: 0;
+                padding: 12mm 12mm 14mm;
+            }
+
+            .page+.page {
+                page-break-before: always;
+            }
+        }
+    </style>
 </head>
+
 <body class="bg-gray-200">
 
-<!-- ════════════════ LOGIN SCREEN ════════════════ -->
-<div id="loginScreen">
-  <div class="scan-line"></div>
-  <div class="h-pulse"></div>
-  <div class="h-pulse"></div>
-  <div class="h-pulse"></div>
-  <div class="corner tl"></div>
-  <div class="corner tr"></div>
-  <div class="corner bl"></div>
-  <div class="corner br"></div>
+    <!-- ════════════════ LOGIN SCREEN ════════════════ -->
+    <div id="loginScreen">
+        <div class="scan-line"></div>
+        <div class="h-pulse"></div>
+        <div class="h-pulse"></div>
+        <div class="h-pulse"></div>
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
 
-  <div class="login-card">
-    <div class="logo-block">
-      <div class="logo-hex">
-        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-          <path d="M18 4L32 12V24L18 32L4 24V12L18 4Z" stroke="#22c55e" stroke-width="1.5" fill="rgba(34,197,94,0.1)"/>
-          <path d="M18 10L26 15V22L18 27L10 22V15L18 10Z" fill="rgba(34,197,94,0.2)" stroke="#4ade80" stroke-width="1"/>
-          <circle cx="18" cy="18" r="4" fill="#22c55e" opacity=".9"/>
-          <line x1="18" y1="4" x2="18" y2="10" stroke="#22c55e" stroke-width="1.5"/>
-          <line x1="18" y1="26" x2="18" y2="32" stroke="#22c55e" stroke-width="1.5"/>
-          <line x1="4" y1="12" x2="10" y2="15" stroke="#22c55e" stroke-width="1.5"/>
-          <line x1="26" y1="21" x2="32" y2="24" stroke="#22c55e" stroke-width="1.5"/>
-          <line x1="32" y1="12" x2="26" y2="15" stroke="#22c55e" stroke-width="1.5"/>
-          <line x1="10" y1="21" x2="4" y2="24" stroke="#22c55e" stroke-width="1.5"/>
-        </svg>
-      </div>
-      <div class="logo-name">AGROVOO</div>
-      <div class="logo-sub">Tecnologia Agrícola</div>
-      <div class="restricted-badge">◈ ÁREA EXCLUSIVA</div>
+        <div class="login-card">
+            <div class="logo-block">
+                <div class="logo-hex">
+                    <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                        <path d="M18 4L32 12V24L18 32L4 24V12L18 4Z" stroke="#22c55e" stroke-width="1.5"
+                            fill="rgba(34,197,94,0.1)" />
+                        <path d="M18 10L26 15V22L18 27L10 22V15L18 10Z" fill="rgba(34,197,94,0.2)" stroke="#4ade80"
+                            stroke-width="1" />
+                        <circle cx="18" cy="18" r="4" fill="#22c55e" opacity=".9" />
+                        <line x1="18" y1="4" x2="18" y2="10" stroke="#22c55e" stroke-width="1.5" />
+                        <line x1="18" y1="26" x2="18" y2="32" stroke="#22c55e" stroke-width="1.5" />
+                        <line x1="4" y1="12" x2="10" y2="15" stroke="#22c55e" stroke-width="1.5" />
+                        <line x1="26" y1="21" x2="32" y2="24" stroke="#22c55e" stroke-width="1.5" />
+                        <line x1="32" y1="12" x2="26" y2="15" stroke="#22c55e" stroke-width="1.5" />
+                        <line x1="10" y1="21" x2="4" y2="24" stroke="#22c55e" stroke-width="1.5" />
+                    </svg>
+                </div>
+                <div class="logo-name">AGROVOO</div>
+                <div class="logo-sub">Tecnologia Agrícola</div>
+                <div class="restricted-badge">◈ ÁREA EXCLUSIVA</div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label" for="inputUser">&#9655; Usuário</label>
+                <div class="field-wrapper">
+                    <span class="field-icon">◈</span>
+                    <input class="login-input" id="inputUser" type="text" placeholder="identificação operacional"
+                        autocomplete="off" spellcheck="false">
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label" for="inputPass">&#9655; Senha de Acesso</label>
+                <div class="field-wrapper">
+                    <span class="field-icon">&#9670;</span>
+                    <input class="login-input" id="inputPass" type="password" placeholder="••••••••••••"
+                        autocomplete="off">
+                </div>
+            </div>
+
+            <button class="btn-login" onclick="doLogin()">◈ &nbsp; ACESSAR SISTEMA</button>
+
+            <div class="error-msg" id="errorMsg">⚠ &nbsp; CREDENCIAIS INVÁLIDAS — ACESSO NEGADO</div>
+
+            <div class="status-bar">
+                <span class="status-dot"></span>
+                SISTEMA OPERACIONAL &nbsp;·&nbsp; AGROVOO v2.0
+            </div>
+        </div>
     </div>
 
-    <div class="field-group">
-      <label class="field-label" for="inputUser">&#9655; Usuário</label>
-      <div class="field-wrapper">
-        <span class="field-icon">◈</span>
-        <input class="login-input" id="inputUser" type="text" placeholder="identificação operacional" autocomplete="off" spellcheck="false">
-      </div>
-    </div>
+    <div id="transitionOverlay"></div>
 
-    <div class="field-group">
-      <label class="field-label" for="inputPass">&#9655; Senha de Acesso</label>
-      <div class="field-wrapper">
-        <span class="field-icon">&#9670;</span>
-        <input class="login-input" id="inputPass" type="password" placeholder="••••••••••••" autocomplete="off">
-      </div>
-    </div>
+    <!-- ════════════════ REPORT ════════════════ -->
+    <div id="reportContent">
+        <div class="max-w-[220mm] mx-auto py-8">
 
-    <button class="btn-login" onclick="doLogin()">◈ &nbsp; ACESSAR SISTEMA</button>
+            <div class="flex justify-center gap-3 mb-6 no-print">
+                <button onclick="downloadPDF()" id="btnPDF"
+                    class="bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-lg font-bold shadow-lg">&#128196;
+                    Baixar PDF</button>
+                <button onclick="window.print()"
+                    class="bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-bold shadow-lg">&#128424;
+                    Imprimir</button>
+                <button onclick="doLogout()"
+                    class="bg-red-700 hover:bg-red-800 text-white px-6 py-3 rounded-lg font-bold shadow-lg no-print">&#9665;
+                    Sair</button>
+            </div>
 
-    <div class="error-msg" id="errorMsg">⚠ &nbsp; CREDENCIAIS INVÁLIDAS — ACESSO NEGADO</div>
+            <!-- PAGINA 1 -->
+            <div id="page1" class="page">
+                <div class="company-header">
+                    <div>
+                        <div class="company-logo">AGROVOO</div>
+                        <div class="company-sub">TECNOLOGIA AGRICOLA - Pulverizacao Inteligente</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div class="report-title">RELATÓRIO OPERACIONAL</div>
+                        <div class="report-order">Ordem N°: <input type="text" id="ordem" value="EDNA300426"
+                                style="border:none;border-bottom:1px solid #166534;outline:none;font-weight:bold;width:100px;text-align:center;font-size:11px;background:transparent;">
+                        </div>
+                    </div>
+                    <div class="company-contact">
+                        Rua Tiradentes, 2080 – Assis – SP<br>agrovoo.tec.br | contato@agrovoo.tec.br<br>(18)
+                        99706-9421<br>CNPJ: 62.688.987/0001-36
+                    </div>
+                </div>
 
-    <div class="status-bar">
-      <span class="status-dot"></span>
-      SISTEMA OPERACIONAL &nbsp;·&nbsp; AGROVOO v2.0
-    </div>
-  </div>
-</div>
+                <!-- DADOS DO CLIENTE (campo único, sem CNPJ aqui — cliente é pessoa física/proprietária) -->
+                <div class="grid-2col mb-2">
+                    <div>
+                        <div class="section-title">Dados do Cliente</div>
+                        <div class="info-box">
+                            <div class="info-row"><span class="info-label">Cliente:</span><span
+                                    class="info-value"><input type="text" value="Edna Magalhães Cortez"></span></div>
+                            <div class="info-row"><span class="info-label">Fone:</span><span class="info-value"><input
+                                        type="text" value="(18) 99771-6073"></span></div>
+                            <div class="info-row"><span class="info-label">E-mail:</span><span class="info-value"><input
+                                        type="text" value="thiagocvalle@hotmail.com"></span></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="section-title">Dados do Serviço</div>
+                        <div class="info-box">
+                            <div class="info-row"><span class="info-label">Serviço:</span><span
+                                    class="info-value"><input type="text" value="Pulverização com Drone"></span></div>
+                            <div class="info-row"><span class="info-label">Cultura:</span><span
+                                    class="info-value"><input type="text" value="Pastagem (Capim)"></span></div>
+                            <div class="info-row"><span class="info-label">Objetivo:</span><span
+                                    class="info-value"><input type="text"
+                                        value="Controle de plantas daninhas de folha larga"></span></div>
+                        </div>
+                    </div>
+                </div>
 
-<div id="transitionOverlay"></div>
+                <!-- PROPRIEDADES — duas propriedades com dados distintos -->
+                <div class="section-title">Propriedades Atendidas</div>
+                <div class="info-box" style="padding:0;">
+                    <table style="width:100%;border-collapse:collapse;font-size:10.5px;">
+                        <thead>
+                            <tr style="background:#e8f5e9;">
+                                <th
+                                    style="padding:5px 8px;border-bottom:1px solid #d1fae5;color:#166534;text-align:left;font-size:10px;width:28%;">
+                                    Propriedade</th>
+                                <th
+                                    style="padding:5px 8px;border-bottom:1px solid #d1fae5;color:#166534;text-align:left;font-size:10px;width:22%;">
+                                    Município/UF</th>
+                                <th
+                                    style="padding:5px 8px;border-bottom:1px solid #d1fae5;color:#166534;text-align:left;font-size:10px;width:24%;">
+                                    CNPJ</th>
+                                <th
+                                    style="padding:5px 8px;border-bottom:1px solid #d1fae5;color:#166534;text-align:left;font-size:10px;">
+                                    Inscrição Estadual</th>
+                                <th
+                                    style="padding:5px 8px;border-bottom:1px solid #d1fae5;color:#166634;text-align:right;font-size:10px;width:12%;">
+                                    Área (ha)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom:1px solid #e5e7eb;">
+                                <td style="padding:4px 8px;"><input type="text" value="Fazenda San Thiago"
+                                        style="border:none;background:transparent;outline:none;width:100%;font-size:10.5px;font-weight:bold;">
+                                </td>
+                                <td style="padding:4px 8px;"><input type="text" value="Sandovalina - SP"
+                                        style="border:none;background:transparent;outline:none;width:100%;font-size:10.5px;">
+                                </td>
+                                <td style="padding:4px 8px;"><input type="text" value="08.095.825/0005-72"
+                                        style="border:none;background:transparent;outline:none;width:100%;font-size:10.5px;">
+                                </td>
+                                <td style="padding:4px 8px;"><input type="text" value="603.053.030.118"
+                                        style="border:none;background:transparent;outline:none;width:100%;font-size:10.5px;">
+                                </td>
+                                <td style="padding:4px 8px;text-align:right;"><input type="text" value="68,40"
+                                        style="border:none;background:transparent;outline:none;width:100%;font-size:10.5px;text-align:right;">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:4px 8px;"><input type="text" value="Estância Primavera"
+                                        style="border:none;background:transparent;outline:none;width:100%;font-size:10.5px;font-weight:bold;">
+                                </td>
+                                <td style="padding:4px 8px;"><input type="text" value="Estrela do Norte - SP"
+                                        style="border:none;background:transparent;outline:none;width:100%;font-size:10.5px;">
+                                </td>
+                                <td style="padding:4px 8px;"><input type="text" value="08.095.825/0002-20"
+                                        style="border:none;background:transparent;outline:none;width:100%;font-size:10.5px;">
+                                </td>
+                                <td style="padding:4px 8px;"><input type="text" value="300.052.866.115"
+                                        style="border:none;background:transparent;outline:none;width:100%;font-size:10.5px;">
+                                </td>
+                                <td style="padding:4px 8px;text-align:right;"><input type="text" value="69,80"
+                                        style="border:none;background:transparent;outline:none;width:100%;font-size:10.5px;text-align:right;">
+                                </td>
+                            </tr>
+                            <tr style="background:#f0fdf4;border-top:2px solid #166534;">
+                                <td colspan="4"
+                                    style="padding:4px 8px;font-weight:bold;color:#166534;font-size:10.5px;">ÁREA TOTAL
+                                    APLICADA</td>
+                                <td style="padding:4px 8px;text-align:right;font-weight:bold;color:#166534;"><input
+                                        type="text" value="138,20"
+                                        style="border:none;background:transparent;outline:none;width:100%;font-size:10.5px;text-align:right;font-weight:bold;color:#166534;">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-<!-- ════════════════ REPORT ════════════════ -->
-<div id="reportContent">
-<div class="max-w-[220mm] mx-auto py-8">
+                <!-- DATAS E CONFIGURAÇÃO -->
+                <div class="section-title">Dados Operacionais</div>
+                <div class="info-box">
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;">
+                        <div class="info-row"
+                            style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;">
+                            <span class="info-label" style="width:auto;">Data Início</span><span class="info-value"
+                                style="width:100%;"><input type="text" value="30/04/2026"></span></div>
+                        <div class="info-row"
+                            style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;">
+                            <span class="info-label" style="width:auto;">Data Fim</span><span class="info-value"
+                                style="width:100%;"><input type="text" value="06/05/2026"></span></div>
+                        <div class="info-row"
+                            style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;">
+                            <span class="info-label" style="width:auto;">Velocidade</span><span class="info-value"
+                                style="width:100%;"><input type="text" value="10 m/s"></span></div>
+                        <div class="info-row"
+                            style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;">
+                            <span class="info-label" style="width:auto;">Faixa</span><span class="info-value"
+                                style="width:100%;"><input type="text" value="10 m"></span></div>
+                        <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;">
+                            <span class="info-label" style="width:auto;">Altura de Voo</span><span class="info-value"
+                                style="width:100%;"><input type="text" value="4 m (sobre cultura)"></span></div>
+                    </div>
+                </div>
 
-<div class="flex justify-center gap-3 mb-6 no-print">
-  <button onclick="downloadPDF()" id="btnPDF" class="bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-lg font-bold shadow-lg">&#128196; Baixar PDF</button>
-  <button onclick="window.print()" class="bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-bold shadow-lg">&#128424; Imprimir</button>
-  <button onclick="doLogout()" class="bg-red-700 hover:bg-red-800 text-white px-6 py-3 rounded-lg font-bold shadow-lg no-print">&#9665; Sair</button>
-</div>
+                <div class="section-title">Equipe Operacional</div>
+                <div class="info-box">
+                    <div class="grid-3col" style="gap:12px;">
+                        <div>
+                            <div
+                                style="font-size:10px;font-weight:bold;color:#166534;border-bottom:1px solid #d1fae5;padding-bottom:3px;margin-bottom:6px;">
+                                AERONAVES</div>
+                            <div class="info-row" style="border:none;"><span class="info-label"
+                                    style="width:80px;font-size:10px;">Drone 1:</span><span class="info-value"><input
+                                        type="text" value="EAV-30XP"></span></div>
+                            <div class="info-row" style="border:none;"><span class="info-label"
+                                    style="width:80px;font-size:10px;">Drone 2:</span><span class="info-value"><input
+                                        type="text" value="DJI T25"></span></div>
+                        </div>
+                        <div>
+                            <div
+                                style="font-size:10px;font-weight:bold;color:#166534;border-bottom:1px solid #d1fae5;padding-bottom:3px;margin-bottom:6px;">
+                                PILOTO</div>
+                            <div class="info-row" style="border:none;"><span class="info-label"
+                                    style="width:80px;font-size:10px;">Nome:</span><span class="info-value"><input
+                                        type="text" value="Saulo Borges"></span></div>
+                            <div class="info-row" style="border:none;"><span class="info-label"
+                                    style="width:80px;font-size:10px;">CAAR:</span><span class="info-value"><input
+                                        type="text" value="21052.016695/20"></span></div>
+                        </div>
+                        <div>
+                            <div
+                                style="font-size:10px;font-weight:bold;color:#166534;border-bottom:1px solid #d1fae5;padding-bottom:3px;margin-bottom:6px;">
+                                RESP. TÉCNICA</div>
+                            <div class="info-row" style="border:none;"><span class="info-label"
+                                    style="width:80px;font-size:10px;">Nome:</span><span class="info-value"><input
+                                        type="text" value="Jéssica Dadalt"></span></div>
+                            <div class="info-row" style="border:none;"><span class="info-label"
+                                    style="width:80px;font-size:10px;">CREA:</span><span class="info-value"><input
+                                        type="text" value="5071099466-SP"></span></div>
+                        </div>
+                    </div>
+                    <div style="border-top:1px solid #e5e7eb;margin-top:6px;padding-top:6px;">
+                        <div style="font-size:10px;font-weight:bold;color:#166534;margin-bottom:4px;">RESPONSÁVEIS NAS
+                            PROPRIEDADES</div>
+                        <div style="display:flex;gap:40px;">
+                            <input type="text" value="Sr. Lauro e funcionários (Faz. San Thiago)"
+                                style="border:none;background:transparent;outline:none;width:280px;font-size:11px;">
+                            <input type="text" value="Sr. Rodrigo — Eng. (1º dia, período manhã)"
+                                style="border:none;background:transparent;outline:none;width:280px;font-size:11px;">
+                        </div>
+                    </div>
+                </div>
 
-<!-- PAGINA 1 -->
-<div id="page1" class="page">
-  <div class="company-header">
-    <div>
-      <div class="company-logo">AGROVOO</div>
-      <div class="company-sub">TECNOLOGIA AGRICOLA - Pulverizacao Inteligente</div>
-    </div>
-    <div style="text-align:center;">
-      <div class="report-title">RELATÓRIO OPERACIONAL</div>
-      <div class="report-order">Ordem N°: <input type="text" id="ordem" value="MATSUDA230426" style="border:none;border-bottom:1px solid #166534;outline:none;font-weight:bold;width:100px;text-align:center;font-size:11px;background:transparent;"></div>
-    </div>
-    <div class="company-contact">
-      Rua Tiradentes, 2080 – Assis – SP<br>agrovoo.tec.br | contato@agrovoo.tec.br<br>(18) 99706-9421<br>CNPJ: 62.688.987/0001-36
-    </div>
-  </div>
+                <div class="table-header-row">
+                    <div class="section-title">Aplicações por Propriedade — 30/04/2026</div>
+                    <div class="table-btns no-print">
+                        <button class="row-btn btn-remove" id="btnMinusApl"
+                            onclick="removeRow('tbodyAplicacoes','btnMinusApl')"
+                            title="Remover última linha">&#8722;</button>
+                        <button class="row-btn btn-add" onclick="addRowAplicacoes()" title="Adicionar linha">+</button>
+                    </div>
+                </div>
+                <table class="table-report" style="margin-top:0;">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Início</th>
+                            <th>Fim</th>
+                            <th>Local / Propriedade</th>
+                            <th>Área (ha)</th>
+                            <th>Condições Climáticas</th>
+                            <th>Alt (m)</th>
+                            <th>Faixa (m)</th>
+                            <th>Vel (m/s)</th>
+                            <th>Vol (L/ha)</th>
+                            <th>Gota (μ)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyAplicacoes">
+                        <tr>
+                            <td><input type="text" value="30/04/2026"></td>
+                            <td><input type="text" value="10:00"></td>
+                            <td><input type="text" value="15:30"></td>
+                            <td><input type="text" value="Faz. San Thiago"></td>
+                            <td><input type="text" value="68,40"></td>
+                            <td><input type="text" value="0-4km/h 21-30°C"></td>
+                            <td><input type="text" value="4"></td>
+                            <td><input type="text" value="10"></td>
+                            <td><input type="text" value="10"></td>
+                            <td><input type="text" value="—"></td>
+                            <td><input type="text" value="—"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" value="30/04/2026"></td>
+                            <td><input type="text" value="17:30"></td>
+                            <td><input type="text" value="23:30"></td>
+                            <td><input type="text" value="Est. Primavera"></td>
+                            <td><input type="text" value="69,80"></td>
+                            <td><input type="text" value="4-9km/h 32°C raj.12km/h"></td>
+                            <td><input type="text" value="4"></td>
+                            <td><input type="text" value="10"></td>
+                            <td><input type="text" value="10"></td>
+                            <td><input type="text" value="—"></td>
+                            <td><input type="text" value="—"></td>
+                        </tr>
+                    </tbody>
+                </table>
 
-  <div class="grid-2col mb-2">
-    <div>
-      <div class="section-title">Dados do Cliente</div>
-      <div class="info-box">
-        <div class="info-row"><span class="info-label">Cliente:</span><span class="info-value"><input type="text" value="Comércio e Indústria Matsuda Imp. Ex"></span></div>
-        <div class="info-row"><span class="info-label">CNPJ/CPF:</span><span class="info-value"><input type="text" value="43.206.069/0001-89"></span></div>
-        <div class="info-row"><span class="info-label">Endereço:</span><span class="info-value"><input type="text" value="Rod. Raposo Tavares, SP 270 – Km 5"></span></div>
-      </div>
-    </div>
-    <div>
-      <div class="section-title">Dados da Propriedade</div>
-      <div class="info-box">
-        <div class="info-row"><span class="info-label">Propriedade:</span><span class="info-value"><input type="text" value="Área de Capim (Pivô e Sítio)"></span></div>
-        <div class="info-row"><span class="info-label">Município/UF:</span><span class="info-value"><input type="text" value="Álvares Machado - SP"></span></div>
-        <div class="info-row"><span class="info-label">Endereço:</span><span class="info-value"><input type="text" value="Rod. Raposo Tavares, SP 270 – Km 5"></span></div>
-      </div>
-    </div>
-  </div>
+                <div class="table-header-row" style="margin-top:8px;">
+                    <div class="section-title">Receituário Agronômico / Produtos Utilizados</div>
+                    <div class="table-btns no-print">
+                        <button class="row-btn btn-remove" id="btnMinusRec"
+                            onclick="removeRow('tbodyReceituario','btnMinusRec')"
+                            title="Remover última linha">&#8722;</button>
+                        <button class="row-btn btn-add" onclick="addRowReceituario()" title="Adicionar linha">+</button>
+                    </div>
+                </div>
+                <div
+                    style="font-size:10px;padding:3px 8px;background:#f9fafb;border:1px solid #d1fae5;border-top:none;margin-bottom:0;">
+                    Receita: <input type="text" value="R - EDNA 001"
+                        style="border:none;border-bottom:1px solid #166534;outline:none;width:110px;font-size:10px;background:transparent;">
+                    &nbsp;&nbsp;Área total: <input type="text" value="138,20 ha"
+                        style="border:none;border-bottom:1px solid #166534;outline:none;width:70px;font-size:10px;background:transparent;">
+                </div>
+                <table class="table-report">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Classe</th>
+                            <th>Unidade</th>
+                            <th>Dose/ha</th>
+                            <th>Qtd Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyReceituario">
+                        <tr>
+                            <td><input type="text" value="Adjuvante Prime"></td>
+                            <td><input type="text" value="Adjuvante"></td>
+                            <td><input type="text" value="L"></td>
+                            <td><input type="text" value="0,070"></td>
+                            <td><input type="text" value="9,67 L"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" value="Arts"></td>
+                            <td><input type="text" value="Herbicida"></td>
+                            <td><input type="text" value="L"></td>
+                            <td><input type="text" value="3,300"></td>
+                            <td><input type="text" value="456,06 L"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" value="Óleo"></td>
+                            <td><input type="text" value="Adjuvante/Óleo"></td>
+                            <td><input type="text" value="L"></td>
+                            <td><input type="text" value="0,600"></td>
+                            <td><input type="text" value="82,92 L"></td>
+                        </tr>
+                    </tbody>
+                </table>
 
-  <div class="section-title">Dados do Serviço</div>
-  <div class="info-box">
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;">
-      <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;"><span class="info-label" style="width:auto;">Serviço</span><span class="info-value" style="width:100%;"><input type="text" value="Pulverização com Drone"></span></div>
-      <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;"><span class="info-label" style="width:auto;">Cultura</span><span class="info-value" style="width:100%;"><input type="text" value="Pastagem (Capim)"></span></div>
-      <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;"><span class="info-label" style="width:auto;">Talhões</span><span class="info-value" style="width:100%;"><input type="text" value="Pivô e Sítio"></span></div>
-      <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;"><span class="info-label" style="width:auto;">Área Total</span><span class="info-value" style="width:100%;"><input type="text" value="53,79 ha"></span></div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-top:1px solid #e5e7eb;">
-      <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;"><span class="info-label" style="width:auto;">Data Início</span><span class="info-value" style="width:100%;"><input type="text" value="23/04/2026"></span></div>
-      <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;"><span class="info-label" style="width:auto;">Data Fim</span><span class="info-value" style="width:100%;"><input type="text" value="23/04/2026"></span></div>
-      <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;border-right:1px solid #e5e7eb;"><span class="info-label" style="width:auto;">Horas de Voo</span><span class="info-value" style="width:100%;"><input type="text" value="10:30 h"></span></div>
-      <div class="info-row" style="flex-direction:column;align-items:flex-start;padding:4px 8px;"><span class="info-label" style="width:auto;">Deslocamento</span><span class="info-value" style="width:100%;"><input type="text" value="410 km"></span></div>
-    </div>
-  </div>
+                <div class="company-footer"><span class="footer-highlight">AGROVOO TECNOLOGIA AGRICOLA</span> –
+                    Pulverizacao Inteligente &nbsp;|&nbsp; Rua Tiradentes, 2080 – Assis – SP &nbsp;|&nbsp;
+                    agrovoo.tec.br &nbsp;|&nbsp; contato@agrovoo.tec.br &nbsp;|&nbsp; (18) 99706-9421</div>
+                <div class="absolute bottom-3 right-8 text-[9px] text-gray-400">Página 1 de 3</div>
+            </div>
 
-  <div class="section-title">Equipe Operacional</div>
-  <div class="info-box">
-    <div class="grid-3col" style="gap:12px;">
-      <div>
-        <div style="font-size:10px;font-weight:bold;color:#166534;border-bottom:1px solid #d1fae5;padding-bottom:3px;margin-bottom:6px;">AERONAVE</div>
-        <div class="info-row" style="border:none;"><span class="info-label" style="width:80px;font-size:10px;">Modelo:</span><span class="info-value"><input type="text" value="EAV-30XP"></span></div>
-        <div class="info-row" style="border:none;"><span class="info-label" style="width:80px;font-size:10px;">Registro:</span><span class="info-value"><input type="text" value="EAVUAV-608552"></span></div>
-      </div>
-      <div>
-        <div style="font-size:10px;font-weight:bold;color:#166534;border-bottom:1px solid #d1fae5;padding-bottom:3px;margin-bottom:6px;">PILOTO</div>
-        <div class="info-row" style="border:none;"><span class="info-label" style="width:80px;font-size:10px;">Nome:</span><span class="info-value"><input type="text" value="Saulo Borges"></span></div>
-        <div class="info-row" style="border:none;"><span class="info-label" style="width:80px;font-size:10px;">CAAR:</span><span class="info-value"><input type="text" value="21052.016695/20"></span></div>
-      </div>
-      <div>
-        <div style="font-size:10px;font-weight:bold;color:#166534;border-bottom:1px solid #d1fae5;padding-bottom:3px;margin-bottom:6px;">RESP. TÉCNICO</div>
-        <div class="info-row" style="border:none;"><span class="info-label" style="width:80px;font-size:10px;">Nome:</span><span class="info-value"><input type="text" value="Jéssica Dadalt"></span></div>
-        <div class="info-row" style="border:none;"><span class="info-label" style="width:80px;font-size:10px;">CREA:</span><span class="info-value"><input type="text" value="5071099466-SP"></span></div>
-      </div>
-    </div>
-    <div style="border-top:1px solid #e5e7eb;margin-top:6px;padding-top:6px;">
-      <div style="font-size:10px;font-weight:bold;color:#166534;margin-bottom:4px;">AJUDANTES / RESP. CAMPO</div>
-      <div style="display:flex;gap:40px;">
-        <input type="text" value="Caio (AgroVoo)" style="border:none;background:transparent;outline:none;width:260px;font-size:11px;">
-        <input type="text" value="Sr. Lucas e Sr. André (Matsuda)" style="border:none;background:transparent;outline:none;width:260px;font-size:11px;">
-      </div>
-    </div>
-  </div>
+            <!-- PAGINA 2 -->
+            <div id="page2" class="page">
+                <div
+                    style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #166534;padding-bottom:6px;margin-bottom:10px;">
+                    <span class="company-logo" style="font-size:20px;">AGROVOO</span>
+                    <div style="font-size:12px;font-weight:bold;color:#166534;">RELATÓRIO OPERACIONAL — Ordem N° <input
+                            type="text" value="EDNA300426"
+                            style="border:none;border-bottom:1px solid #166534;outline:none;width:100px;font-size:11px;background:transparent;font-weight:bold;">
+                    </div>
+                </div>
 
-  <div class="table-header-row">
-    <div class="section-title">Aplicações</div>
-    <div class="table-btns no-print">
-      <button class="row-btn btn-remove" id="btnMinusApl" onclick="removeRow('tbodyAplicacoes','btnMinusApl')" title="Remover última linha">&#8722;</button>
-      <button class="row-btn btn-add" onclick="addRowAplicacoes()" title="Adicionar linha">+</button>
-    </div>
-  </div>
-  <table class="table-report" style="margin-top:0;">
-    <thead><tr><th>Data</th><th>Início</th><th>Fim</th><th>Local</th><th>Área (ha)</th><th>Meteorologia</th><th>Alt (m)</th><th>Faixa (m)</th><th>Vel (m/s)</th><th>Vol (L/ha)</th><th>Gota (μ)</th></tr></thead>
-    <tbody id="tbodyAplicacoes">
-      <tr><td><input type="text" value="23/04/2026"></td><td><input type="text" value="06:30"></td><td><input type="text" value="17:00"></td><td><input type="text" value="Sítio + Pivô"></td><td><input type="text" value="53,79"></td><td><input type="text" value="0-8km/h 22-32C"></td><td><input type="text" value="3"></td><td><input type="text" value="10"></td><td><input type="text" value="8"></td><td><input type="text" value="15"></td><td><input type="text" value="400"></td></tr>
-    </tbody>
-   </table>
+                <div style="page-break-inside: avoid;">
+                    <div class="section-title">Observações / Relato da Operação</div>
+                    <div style="background:#f9fafb;border:1px solid #d1fae5;border-top:none;margin-bottom:8px;">
+                        <textarea id="obsTexto" oninput="autoResize(this)" class="obs-textarea"
+                            placeholder="Digite aqui suas observações...">Aplicações realizadas para controle de plantas daninhas de folha larga em áreas de pastagem, contemplando as propriedades Fazenda San Thiago (Sandovalina/SP) e Estância Primavera (Estrela do Norte/SP).
 
-  <div class="table-header-row" style="margin-top:8px;">
-    <div class="section-title">Receituário Agronômico / Produtos</div>
-    <div class="table-btns no-print">
-      <button class="row-btn btn-remove" id="btnMinusRec" onclick="removeRow('tbodyReceituario','btnMinusRec')" title="Remover última linha">&#8722;</button>
-      <button class="row-btn btn-add" onclick="addRowReceituario()" title="Adicionar linha">+</button>
-    </div>
-  </div>
-  <div style="font-size:10px;padding:3px 8px;background:#f9fafb;border:1px solid #d1fae5;border-top:none;margin-bottom:0;">
-    Receita: <input type="text" value="R - MATSUDA 001" style="border:none;border-bottom:1px solid #166534;outline:none;width:110px;font-size:10px;background:transparent;">
-  </div>
-  <table class="table-report">
-    <thead><tr><th>Produto</th><th>Classe</th><th>Unidade</th><th>Dose/ha</th><th>Qtd Total</th></tr></thead>
-    <tbody id="tbodyReceituario">
-      <tr><td><input type="text" value="Espalhante Adesivo"></td><td><input type="text" value="Adjuvante"></td><td><input type="text" value="L"></td><td><input type="text" value="0,10"></td><td><input type="text" value="5,38 L"></td></tr>
-      <tr><td><input type="text" value="Fungicida Bravonil"></td><td><input type="text" value="Fungicida"></td><td><input type="text" value="L"></td><td><input type="text" value="0,80"></td><td><input type="text" value="43,03 L"></td></tr>
-      <tr><td><input type="text" value="Fungicida Nativo"></td><td><input type="text" value="Fungicida"></td><td><input type="text" value="L"></td><td><input type="text" value="0,50"></td><td><input type="text" value="26,90 L"></td></tr>
-      <tr><td><input type="text" value="Inseticida Klorpan"></td><td><input type="text" value="Inseticida"></td><td><input type="text" value="L"></td><td><input type="text" value="1,00"></td><td><input type="text" value="53,79 L"></td></tr>
-      <tr><td><input type="text" value="Adubo Foliar Mônico"></td><td><input type="text" value="Fertilizante"></td><td><input type="text" value="L"></td><td><input type="text" value="0,50"></td><td><input type="text" value="26,90 L"></td></tr>
-    </tbody>
-  </table>
+Durante a execução da aplicação na Fazenda San Thiago, o drone EAV-30XP colidiu com galhos secos presentes na área operacional, ocasionando danos que impossibilitaram a continuidade da operação com a aeronave principal.
 
-  <div class="company-footer"><span class="footer-highlight">AGROVOO TECNOLOGIA AGRICOLA</span> – Pulverizacao Inteligente &nbsp;|&nbsp; Rua Tiradentes, 2080 – Assis – SP &nbsp;|&nbsp; agrovoo.tec.br &nbsp;|&nbsp; contato@agrovoo.tec.br &nbsp;|&nbsp; (18) 99706-9421</div>
-  <div class="absolute bottom-3 right-8 text-[9px] text-gray-400">Página 1 de 3</div>
-</div>
+Posteriormente, foi realizada tentativa de continuidade com outra aeronave reserva, porém o equipamento não conseguia deslocar-se corretamente até o local de aplicação, não chegando a executar pulverização.
 
-<!-- PAGINA 2 -->
-<div id="page2" class="page">
-  <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #166534;padding-bottom:6px;margin-bottom:10px;">
-    <span class="company-logo" style="font-size:20px;">AGROVOO</span>
-    <div style="font-size:12px;font-weight:bold;color:#166534;">RELATÓRIO OPERACIONAL — Ordem N° <input type="text" value="MATSUDA230426" style="border:none;border-bottom:1px solid #166534;outline:none;width:100px;font-size:11px;background:transparent;font-weight:bold;"></div>
-  </div>
+Diante da intercorrência operacional, foi necessária a locação de uma nova aeronave, sendo utilizado o drone DJI T25 para continuidade e conclusão dos serviços.
 
-  <div style="page-break-inside: avoid;"><div class="section-title">Observações / Relato da Operação</div>
-  <div style="background:#f9fafb;border:1px solid #d1fae5;border-top:none;margin-bottom:8px;">
-    <textarea id="obsTexto" oninput="autoResize(this)" class="obs-textarea" placeholder="Digite aqui suas observações...">
-Aplicação realizada conforme solicitação do cliente, incluindo herbicida, inseticida e adubação foliar.
-Foi adicionada área extra de teste (2 ha no total), conforme orientação da equipe da Matsuda.
-O preparo da calda, bem como a definição da ordem e dosagem dos produtos, foi realizado pela equipe técnica da Matsuda.
-Condições climáticas favoráveis durante toda a operação, com vento baixo e ausência de deriva, garantindo excelente qualidade de aplicação.
-Execução contínua, sem intercorrências.
-Operação conduzida com padrão técnico AgroVoo, assegurando eficiência, segurança e alto desempenho.
-    </textarea>
-  </div></div>
+A Sra. Edna esteve presente no primeiro dia da ocorrência e também no encerramento da operação, permanecendo ciente de todos os acontecimentos durante o período operacional.
 
-  <div class="section-title">Resumo Financeiro</div>
-  <div style="border:1px solid #d1fae5;border-top:none;padding:10px;background:#f9fafb;margin-bottom:8px;">
-    <div class="grid-3col" style="gap:10px;">
-      <div style="background:white;border:1px solid #d1fae5;border-radius:6px;padding:10px;">
-        <div style="font-size:10px;font-weight:bold;color:#166534;border-bottom:1px solid #d1fae5;padding-bottom:4px;margin-bottom:6px;">SERVIÇO</div>
-        <table style="width:100%;font-size:10.5px;">
-          <tr><td style="padding:2px 0;color:#555;">Área total:</td><td style="text-align:right;"><input type="text" value="53,79 ha" style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;"></td></tr>
-          <tr><td style="padding:2px 0;color:#555;">Valor/ha:</td><td style="text-align:right;"><input type="text" value="R$ 90,00" style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;"></td></tr>
-          <tr style="border-top:1px solid #e5e7eb;"><td style="padding:4px 0;font-weight:bold;">Subtotal:</td><td style="text-align:right;font-weight:bold;"><input type="text" value="R$ 4.841,10" style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;font-weight:bold;"></td></tr>
-        </table>
-      </div>
-      <div style="background:white;border:1px solid #bfdbfe;border-radius:6px;padding:10px;">
-        <div style="font-size:10px;font-weight:bold;color:#1d4ed8;border-bottom:1px solid #bfdbfe;padding-bottom:4px;margin-bottom:6px;">DESLOCAMENTO</div>
-        <table style="width:100%;font-size:10.5px;">
-          <tr><td style="padding:2px 0;color:#555;">Quilômetros:</td><td style="text-align:right;"><input type="text" value="410 km" style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;"></td></tr>
-          <tr><td style="padding:2px 0;color:#555;">Valor/km:</td><td style="text-align:right;"><input type="text" value="R$ 1,50" style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;"></td></tr>
-          <tr style="border-top:1px solid #e5e7eb;"><td style="padding:4px 0;font-weight:bold;">Subtotal:</td><td style="text-align:right;font-weight:bold;"><input type="text" value="R$ 615,00" style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;font-weight:bold;"></td></tr>
-        </table>
-      </div>
-      <div style="background:white;border:1px solid #fed7aa;border-radius:6px;padding:10px;">
-        <div style="font-size:10px;font-weight:bold;color:#c2410c;border-bottom:1px solid #fed7aa;padding-bottom:4px;margin-bottom:6px;">OUTROS</div>
-        <table style="width:100%;font-size:10.5px;">
-          <tr><td style="padding:2px 0;color:#555;">Descrição:</td><td style="text-align:right;"><input type="text" value="—" style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;"></td></tr>
-          <tr style="border-top:1px solid #e5e7eb;"><td style="padding:4px 0;font-weight:bold;">Subtotal:</td><td style="text-align:right;font-weight:bold;"><input type="text" value="R$ 0,00" style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;font-weight:bold;"></td></tr>
-        </table>
-      </div>
-    </div>
-    <div style="display:flex;justify-content:space-between;align-items:center;background:#166534;color:white;padding:8px 14px;border-radius:6px;margin-top:10px;">
-      <span style="font-size:12px;font-weight:bold;letter-spacing:1px;">VALOR TOTAL GERAL</span>
-      <input type="text" id="total" value="R$ 5.456,10" style="border:none;background:transparent;color:white;font-size:16px;font-weight:900;outline:none;text-align:right;width:140px;">
-    </div>
-  </div>
+Sr. Rodrigo (Engenheiro responsável) acompanhou o primeiro dia durante o período da manhã.
 
-  <div class="section-title">Assinaturas</div>
-  <div style="border:1px solid #d1fae5;border-top:none;padding:10px 20px;background:#f9fafb;margin-bottom:8px;">
-    <div class="grid-3col" style="text-align:center;gap:20px;">
-      <div>
-        <div class="sig-line"></div>
-        <div style="font-size:10px;font-weight:bold;">CLIENTE</div>
-        <input type="text" value="Comércio e Indústria Matsuda" style="border:none;background:transparent;outline:none;width:100%;text-align:center;font-size:9.5px;margin-top:2px;">
-        <div style="font-size:8.5px;color:#555;">CNPJ: 43.206.069/0001-89</div>
-      </div>
-      <div>
-        <div class="sig-line"></div>
-        <div style="font-size:10px;font-weight:bold;">RESPONSÁVEL TÉCNICO</div>
-        <input type="text" value="Jéssica Dadalt" style="border:none;background:transparent;outline:none;width:100%;text-align:center;font-size:9.5px;margin-top:2px;">
-        <div style="font-size:8.5px;color:#555;">CREA: 5071099466-SP</div>
-      </div>
-      <div>
-        <div class="sig-line"></div>
-        <div style="font-size:10px;font-weight:bold;">PILOTO</div>
-        <input type="text" value="Saulo Borges" style="border:none;background:transparent;outline:none;width:100%;text-align:center;font-size:9.5px;margin-top:2px;">
-        <div style="font-size:8.5px;color:#555;">CAAR: 21052.016695/20</div>
-      </div>
-    </div>
-  </div>
+As operações foram concluídas com segurança, qualidade técnica e eficiência operacional, mantendo o padrão AgroVoo de aplicação agrícola com drones.</textarea>
+                    </div>
+                </div>
 
-  <div class="company-footer"><span class="footer-highlight">AGROVOO TECNOLOGIA AGRICOLA</span> – Pulverizacao Inteligente &nbsp;|&nbsp; Rua Tiradentes, 2080 – Assis – SP &nbsp;|&nbsp; agrovoo.tec.br &nbsp;|&nbsp; contato@agrovoo.tec.br &nbsp;|&nbsp; (18) 99706-9421</div>
-  <div class="absolute bottom-3 right-8 text-[9px] text-gray-400">Página 2 de 3</div>
-</div>
+                <div class="section-title">Resumo Financeiro</div>
+                <div
+                    style="border:1px solid #d1fae5;border-top:none;padding:10px;background:#f9fafb;margin-bottom:8px;">
+                    <div class="grid-3col" style="gap:10px;">
+                        <div style="background:white;border:1px solid #d1fae5;border-radius:6px;padding:10px;">
+                            <div
+                                style="font-size:10px;font-weight:bold;color:#166534;border-bottom:1px solid #d1fae5;padding-bottom:4px;margin-bottom:6px;">
+                                FAZENDA SAN THIAGO</div>
+                            <table style="width:100%;font-size:10.5px;">
+                                <tr>
+                                    <td style="padding:2px 0;color:#555;">Área:</td>
+                                    <td style="text-align:right;"><input type="text" value="68,40 ha"
+                                            style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:2px 0;color:#555;">Valor/ha:</td>
+                                    <td style="text-align:right;"><input type="text" value="R$ 82,00"
+                                            style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;">
+                                    </td>
+                                </tr>
+                                <tr style="border-top:1px solid #e5e7eb;">
+                                    <td style="padding:4px 0;font-weight:bold;">Subtotal:</td>
+                                    <td style="text-align:right;font-weight:bold;"><input type="text"
+                                            value="R$ 5.608,80"
+                                            style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;font-weight:bold;">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="background:white;border:1px solid #d1fae5;border-radius:6px;padding:10px;">
+                            <div
+                                style="font-size:10px;font-weight:bold;color:#166534;border-bottom:1px solid #d1fae5;padding-bottom:4px;margin-bottom:6px;">
+                                ESTÂNCIA PRIMAVERA</div>
+                            <table style="width:100%;font-size:10.5px;">
+                                <tr>
+                                    <td style="padding:2px 0;color:#555;">Área:</td>
+                                    <td style="text-align:right;"><input type="text" value="69,80 ha"
+                                            style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:2px 0;color:#555;">Valor/ha:</td>
+                                    <td style="text-align:right;"><input type="text" value="R$ 82,00"
+                                            style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;">
+                                    </td>
+                                </tr>
+                                <tr style="border-top:1px solid #e5e7eb;">
+                                    <td style="padding:4px 0;font-weight:bold;">Subtotal:</td>
+                                    <td style="text-align:right;font-weight:bold;"><input type="text"
+                                            value="R$ 5.723,60"
+                                            style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;font-weight:bold;">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="background:white;border:1px solid #fed7aa;border-radius:6px;padding:10px;">
+                            <div
+                                style="font-size:10px;font-weight:bold;color:#c2410c;border-bottom:1px solid #fed7aa;padding-bottom:4px;margin-bottom:6px;">
+                                TOTAIS GERAIS</div>
+                            <table style="width:100%;font-size:10.5px;">
+                                <tr>
+                                    <td style="padding:2px 0;color:#555;">Área total:</td>
+                                    <td style="text-align:right;"><input type="text" value="138,20 ha"
+                                            style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:2px 0;color:#555;">Valor/ha:</td>
+                                    <td style="text-align:right;"><input type="text" value="R$ 82,00"
+                                            style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;">
+                                    </td>
+                                </tr>
+                                <tr style="border-top:1px solid #e5e7eb;">
+                                    <td style="padding:4px 0;font-weight:bold;">Subtotal:</td>
+                                    <td style="text-align:right;font-weight:bold;"><input type="text"
+                                            value="R$ 11.332,40"
+                                            style="border:none;background:transparent;outline:none;width:80px;text-align:right;font-size:10.5px;font-weight:bold;">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div
+                        style="display:flex;justify-content:space-between;align-items:center;background:#166534;color:white;padding:8px 14px;border-radius:6px;margin-top:10px;">
+                        <span style="font-size:12px;font-weight:bold;letter-spacing:1px;">VALOR TOTAL GERAL</span>
+                        <input type="text" id="total" value="R$ 11.332,40"
+                            style="border:none;background:transparent;color:white;font-size:16px;font-weight:900;outline:none;text-align:right;width:140px;">
+                    </div>
+                </div>
 
-<!-- PAGINA 3 -->
-<div id="page3" class="page">
-  <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #166534;padding-bottom:6px;margin-bottom:10px;">
-    <span class="company-logo" style="font-size:20px;">AGROVOO</span>
-    <div style="font-size:12px;font-weight:bold;color:#166534;">CROQUI / MAPA DE APLICAÇÕES</div>
-  </div>
+                <div class="section-title">Assinaturas</div>
+                <div
+                    style="border:1px solid #d1fae5;border-top:none;padding:10px 20px;background:#f9fafb;margin-bottom:8px;">
+                    <div class="grid-3col" style="text-align:center;gap:20px;">
+                        <div>
+                            <div class="sig-line"></div>
+                            <div style="font-size:10px;font-weight:bold;">CLIENTE / PROPRIETÁRIA</div>
+                            <input type="text" value="Edna Magalhães Cortez"
+                                style="border:none;background:transparent;outline:none;width:100%;text-align:center;font-size:9.5px;margin-top:2px;">
+                            <div style="font-size:8.5px;color:#555;">Fone: (18) 99771-6073</div>
+                        </div>
+                        <div>
+                            <div class="sig-line"></div>
+                            <div style="font-size:10px;font-weight:bold;">RESPONSÁVEL TÉCNICA</div>
+                            <input type="text" value="Jéssica Dadalt"
+                                style="border:none;background:transparent;outline:none;width:100%;text-align:center;font-size:9.5px;margin-top:2px;">
+                            <div style="font-size:8.5px;color:#555;">CREA: 5071099466-SP</div>
+                        </div>
+                        <div>
+                            <div class="sig-line"></div>
+                            <div style="font-size:10px;font-weight:bold;">PILOTO</div>
+                            <input type="text" value="Saulo Borges"
+                                style="border:none;background:transparent;outline:none;width:100%;text-align:center;font-size:9.5px;margin-top:2px;">
+                            <div style="font-size:8.5px;color:#555;">CAAR: 21052.016695/20</div>
+                        </div>
+                    </div>
+                </div>
 
-  <div class="upload-area" id="uploadArea" onclick="document.getElementById('imgInput').click()">
-    <img id="mapaPreview" src="" alt="" style="display:none;">
-    <div class="upload-hint no-print" id="uploadHint">
-      <span>&#128506;</span>
-      Clique aqui para importar o mapa do PC<br>
-      <span style="font-size:11px;font-weight:normal;color:#555;">(JPG, PNG, etc.)</span>
-    </div>
-  </div>
-  <input type="file" id="imgInput" accept="image/*" style="display:none;" onchange="loadMapImage(event)">
+                <div class="company-footer"><span class="footer-highlight">AGROVOO TECNOLOGIA AGRICOLA</span> –
+                    Pulverizacao Inteligente &nbsp;|&nbsp; Rua Tiradentes, 2080 – Assis – SP &nbsp;|&nbsp;
+                    agrovoo.tec.br &nbsp;|&nbsp; contato@agrovoo.tec.br &nbsp;|&nbsp; (18) 99706-9421</div>
+                <div class="absolute bottom-3 right-8 text-[9px] text-gray-400">Página 2 de 3</div>
+            </div>
 
-  <div class="no-print" style="text-align:center;margin-top:6px;">
-    <button onclick="document.getElementById('imgInput').click()" style="background:#166534;color:white;border:none;padding:6px 18px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:bold;">&#128193; Selecionar imagem</button>
-    <button onclick="limparMapa()" style="background:#dc2626;color:white;border:none;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:bold;margin-left:8px;">&#10005; Remover</button>
-  </div>
+            <!-- PAGINA 3 -->
+            <div id="page3" class="page">
+                <div
+                    style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #166534;padding-bottom:6px;margin-bottom:10px;">
+                    <span class="company-logo" style="font-size:20px;">AGROVOO</span>
+                    <div style="font-size:12px;font-weight:bold;color:#166534;">CROQUI / MAPA DE APLICAÇÕES</div>
+                </div>
 
-  <div style="text-align:center;font-size:10px;margin-top:6px;color:#444;">
-    <input type="text" value="Ordem de Serviço: MATSUDA230426 – Comércio e Indústria Matsuda" style="border:none;border-bottom:1px solid #ccc;outline:none;width:100%;text-align:center;font-size:10px;background:transparent;">
-    <div style="margin-top:3px;">
-      Propriedade: <input type="text" value="Área de Capim (Pivô e Sítio)" style="border:none;border-bottom:1px solid #ccc;outline:none;width:180px;font-size:10px;background:transparent;">
-      &nbsp;&nbsp;Município: <input type="text" value="Álvares Machado - SP" style="border:none;border-bottom:1px solid #ccc;outline:none;width:100px;font-size:10px;background:transparent;">
-    </div>
-  </div>
+                <div class="upload-area" id="uploadArea" onclick="document.getElementById('imgInput').click()">
+                    <img id="mapaPreview" src="" alt="" style="display:none;">
+                    <div class="upload-hint no-print" id="uploadHint">
+                        <span>&#128506;</span>
+                        Clique aqui para importar o mapa do PC<br>
+                        <span style="font-size:11px;font-weight:normal;color:#555;">(JPG, PNG, etc.)</span>
+                    </div>
+                </div>
+                <input type="file" id="imgInput" accept="image/*" style="display:none;" onchange="loadMapImage(event)">
 
-  <div class="section-title" style="margin-top:12px;">Condições de Pagamento</div>
-  <div style="border:1px solid #d1fae5;border-top:none;background:#f9fafb;padding:10px 12px;margin-bottom:8px;">
-    <div class="grid-2col" style="gap:12px;">
-      <div>
-        <div style="font-size:10px;font-weight:bold;color:#166534;margin-bottom:6px;border-bottom:1px solid #d1fae5;padding-bottom:3px;">VALORES DO SERVIÇO</div>
-        <table class="pix-table">
-          <tr><td>Valor cobrado:</td><td><input type="text" value="R$ 90,00"> / ha</td></tr>
-          <tr><td>Área total aplicada:</td><td><input type="text" value="53,79"> ha</td></tr>
-          <tr><td style="font-weight:bold;color:#166534;">Valor total:</td><td><input type="text" value="R$ 5.456,10" style="font-weight:bold;color:#166534;"></td></tr>
-          <tr><td>Forma de pagamento:</td><td><input type="text" value="À vista (PIX)"></td></tr>
-          <tr><td>Data prevista pgto:</td><td><input type="text" value="24/04/2026"></td></tr>
-        </table>
-      </div>
-      <div>
-        <div style="font-size:10px;font-weight:bold;color:#166534;margin-bottom:6px;border-bottom:1px solid #d1fae5;padding-bottom:3px;">&#128273; DADOS PARA PIX</div>
-        <table class="pix-table">
-          <tr><td>Meio:</td><td><input type="text" value="PIX"></td></tr>
-          <tr><td>Tipo de chave:</td><td><input type="text" value="CNPJ"></td></tr>
-          <tr><td>Chave PIX (CNPJ):</td><td><input type="text" value="62.688.987/0001-36" style="font-weight:bold;"></td></tr>
-          <tr><td>Favorecido:</td><td><input type="text" value="AgroVoo Tecnologia Agrícola"></td></tr>
-          <tr><td>Observação:</td><td><input type="text" value="Serviço Matsuda - 53,79ha"></td></tr>
-        </table>
-      </div>
-    </div>
-  </div>
+                <div class="no-print" style="text-align:center;margin-top:6px;">
+                    <button onclick="document.getElementById('imgInput').click()"
+                        style="background:#166534;color:white;border:none;padding:6px 18px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:bold;">&#128193;
+                        Selecionar imagem</button>
+                    <button onclick="limparMapa()"
+                        style="background:#dc2626;color:white;border:none;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:bold;margin-left:8px;">&#10005;
+                        Remover</button>
+                </div>
 
-  <div class="company-footer"><span class="footer-highlight">AGROVOO TECNOLOGIA AGRICOLA</span> – Pulverizacao Inteligente &nbsp;|&nbsp; Rua Tiradentes, 2080 – Assis – SP &nbsp;|&nbsp; agrovoo.tec.br &nbsp;|&nbsp; contato@agrovoo.tec.br &nbsp;|&nbsp; (18) 99706-9421</div>
-  <div class="absolute bottom-3 right-8 text-[9px] text-gray-400">Página 3 de 3</div>
-</div>
+                <div style="text-align:center;font-size:10px;margin-top:6px;color:#444;">
+                    <input type="text" value="Ordem de Serviço: EDNA300426 – Edna Magalhães Cortez"
+                        style="border:none;border-bottom:1px solid #ccc;outline:none;width:100%;text-align:center;font-size:10px;background:transparent;">
+                    <div style="margin-top:3px;">
+                        Propriedades: <input type="text"
+                            value="Faz. San Thiago (Sandovalina/SP) e Est. Primavera (Estrela do Norte/SP)"
+                            style="border:none;border-bottom:1px solid #ccc;outline:none;width:340px;font-size:10px;background:transparent;">
+                    </div>
+                </div>
 
-</div><!-- max-w -->
-</div><!-- reportContent -->
+                <div class="section-title" style="margin-top:12px;">Condições de Pagamento</div>
+                <div
+                    style="border:1px solid #d1fae5;border-top:none;background:#f9fafb;padding:10px 12px;margin-bottom:8px;">
+                    <div class="grid-2col" style="gap:12px;">
+                        <div>
+                            <div
+                                style="font-size:10px;font-weight:bold;color:#166534;margin-bottom:6px;border-bottom:1px solid #d1fae5;padding-bottom:3px;">
+                                VALORES DO SERVIÇO</div>
+                            <table class="pix-table">
+                                <tr>
+                                    <td>Valor cobrado:</td>
+                                    <td><input type="text" value="R$ 82,00"> / ha</td>
+                                </tr>
+                                <tr>
+                                    <td>Área total aplicada:</td>
+                                    <td><input type="text" value="138,20"> ha</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight:bold;color:#166534;">Valor total:</td>
+                                    <td><input type="text" value="R$ 11.332,40" style="font-weight:bold;color:#166534;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Forma de pagamento:</td>
+                                    <td><input type="text" value="À vista (PIX)"></td>
+                                </tr>
+                                <tr>
+                                    <td>Data prevista pgto:</td>
+                                    <td><input type="text" value="10/05/2026"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div>
+                            <div
+                                style="font-size:10px;font-weight:bold;color:#166534;margin-bottom:6px;border-bottom:1px solid #d1fae5;padding-bottom:3px;">
+                                &#128273; DADOS PARA PIX</div>
+                            <table class="pix-table">
+                                <tr>
+                                    <td>Meio:</td>
+                                    <td><input type="text" value="PIX"></td>
+                                </tr>
+                                <tr>
+                                    <td>Tipo de chave:</td>
+                                    <td><input type="text" value="CNPJ"></td>
+                                </tr>
+                                <tr>
+                                    <td>Chave PIX (CNPJ):</td>
+                                    <td><input type="text" value="62.688.987/0001-36" style="font-weight:bold;"></td>
+                                </tr>
+                                <tr>
+                                    <td>Favorecido:</td>
+                                    <td><input type="text" value="AgroVoo Tecnologia Agrícola"></td>
+                                </tr>
+                                <tr>
+                                    <td>Observação:</td>
+                                    <td><input type="text" value="Serv. Faz. San Thiago e Est. Primavera - 138,20ha">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
-<script>
-/* ── LOGIN ── */
-function doLogin(){
-  var u=document.getElementById('inputUser').value.trim();
-  var p=document.getElementById('inputPass').value.trim();
-  var err=document.getElementById('errorMsg');
-  if(u==='operacional' && p==='@agrovoo2025'){
-    err.style.display='none';
-    var ov=document.getElementById('transitionOverlay');
-    ov.style.opacity='1';
-    ov.style.pointerEvents='all';
-    setTimeout(function(){
-      document.getElementById('loginScreen').style.display='none';
-      document.getElementById('reportContent').style.display='block';
-      document.body.style.backgroundColor='#e5e7eb';
-      ov.style.opacity='0';
-      setTimeout(function(){ov.style.pointerEvents='none';},500);
-      var obs=document.getElementById('obsTexto');
-      if(obs)autoResize(obs);
-      updateMinusBtn('tbodyAplicacoes','btnMinusApl');
-      updateMinusBtn('tbodyReceituario','btnMinusRec');
-    },500);
-  } else {
-    err.style.display='block';
-    var card=document.querySelector('.login-card');
-    card.style.animation='shake .4s ease';
-    setTimeout(function(){card.style.animation='';},400);
-    document.getElementById('inputPass').value='';
-  }
-}
+                <div class="company-footer"><span class="footer-highlight">AGROVOO TECNOLOGIA AGRICOLA</span> –
+                    Pulverizacao Inteligente &nbsp;|&nbsp; Rua Tiradentes, 2080 – Assis – SP &nbsp;|&nbsp;
+                    agrovoo.tec.br &nbsp;|&nbsp; contato@agrovoo.tec.br &nbsp;|&nbsp; (18) 99706-9421</div>
+                <div class="absolute bottom-3 right-8 text-[9px] text-gray-400">Página 3 de 3</div>
+            </div>
 
-function doLogout(){
-  document.getElementById('reportContent').style.display='none';
-  document.body.style.backgroundColor='';
-  document.getElementById('loginScreen').style.display='flex';
-  document.getElementById('inputUser').value='';
-  document.getElementById('inputPass').value='';
-  document.getElementById('errorMsg').style.display='none';
-}
+        </div><!-- max-w -->
+    </div><!-- reportContent -->
 
-/* Enter key support */
-document.addEventListener('DOMContentLoaded',function(){
-  ['inputUser','inputPass'].forEach(function(id){
-    document.getElementById(id).addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
-  });
-});
+    <script>
+        /* ── LOGIN ── */
+        function doLogin() {
+            var u = document.getElementById('inputUser').value.trim();
+            var p = document.getElementById('inputPass').value.trim();
+            var err = document.getElementById('errorMsg');
+            if (u === 'operacional' && p === '@agrovoo2025') {
+                err.style.display = 'none';
+                var ov = document.getElementById('transitionOverlay');
+                ov.style.opacity = '1';
+                ov.style.pointerEvents = 'all';
+                setTimeout(function () {
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('reportContent').style.display = 'block';
+                    document.body.style.backgroundColor = '#e5e7eb';
+                    ov.style.opacity = '0';
+                    setTimeout(function () { ov.style.pointerEvents = 'none'; }, 500);
+                    var obs = document.getElementById('obsTexto');
+                    if (obs) autoResize(obs);
+                    updateMinusBtn('tbodyAplicacoes', 'btnMinusApl');
+                    updateMinusBtn('tbodyReceituario', 'btnMinusRec');
+                }, 500);
+            } else {
+                err.style.display = 'block';
+                var card = document.querySelector('.login-card');
+                card.style.animation = 'shake .4s ease';
+                setTimeout(function () { card.style.animation = ''; }, 400);
+                document.getElementById('inputPass').value = '';
+            }
+        }
 
-/* Shake animation */
-var shakeStyle=document.createElement('style');
-shakeStyle.textContent='@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-8px)}80%{transform:translateX(8px)}}';
-document.head.appendChild(shakeStyle);
+        function doLogout() {
+            document.getElementById('reportContent').style.display = 'none';
+            document.body.style.backgroundColor = '';
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('inputUser').value = '';
+            document.getElementById('inputPass').value = '';
+            document.getElementById('errorMsg').style.display = 'none';
+        }
 
-/* ── REPORT FUNCTIONS ── */
-function autoResize(el){el.style.height='auto';el.style.height=(el.scrollHeight)+'px';}
-var MIN_ROWS=1;
-function updateMinusBtn(tbodyId,btnId){var tb=document.getElementById(tbodyId),b=document.getElementById(btnId);if(!b||!tb)return;b.disabled=tb.querySelectorAll('tr').length<=MIN_ROWS;}
-function removeRow(tbodyId,btnId){var tb=document.getElementById(tbodyId),rows=tb.querySelectorAll('tr');if(rows.length<=MIN_ROWS)return;rows[rows.length-1].remove();updateMinusBtn(tbodyId,btnId);}
-function mkTd(){return'<td><input type="text" value="" style="width:100%;border:none;background:transparent;text-align:center;font-size:10px;outline:none;padding:1px;"></td>';}
-function addRowAplicacoes(){var tb=document.getElementById('tbodyAplicacoes'),tr=document.createElement('tr');tr.innerHTML=Array(11).fill('').map(mkTd).join('');tb.appendChild(tr);updateMinusBtn('tbodyAplicacoes','btnMinusApl');}
-function addRowReceituario(){var tb=document.getElementById('tbodyReceituario'),tr=document.createElement('tr');tr.innerHTML=Array(5).fill('').map(mkTd).join('');tb.appendChild(tr);updateMinusBtn('tbodyReceituario','btnMinusRec');}
-function loadMapImage(event){var file=event.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(e){var img=document.getElementById('mapaPreview'),hint=document.getElementById('uploadHint');img.src=e.target.result;img.style.display='block';hint.style.display='none';};reader.readAsDataURL(file);}
-function limparMapa(){var img=document.getElementById('mapaPreview'),hint=document.getElementById('uploadHint');img.src='';img.style.display='none';hint.style.display='block';document.getElementById('imgInput').value='';}
+        document.addEventListener('DOMContentLoaded', function () {
+            ['inputUser', 'inputPass'].forEach(function (id) {
+                document.getElementById(id).addEventListener('keydown', function (e) { if (e.key === 'Enter') doLogin(); });
+            });
+        });
 
-async function downloadPDF(){
-  var btn=document.getElementById('btnPDF');
-  btn.disabled=true;btn.textContent='Gerando PDF...';
-  var noprints=document.querySelectorAll('.no-print');
-  noprints.forEach(function(el){el.style.display='none';});
-  var replacements=[];
-  document.querySelectorAll('.page input,.page textarea').forEach(function(el){
-    var val=el.value||'';
-    var span=document.createElement('span');
-    span.style.display='inline-block';span.style.width='100%';
-    span.style.fontSize=el.style.fontSize||'inherit';
-    span.style.fontWeight=el.style.fontWeight||'inherit';
-    span.style.color=el.style.color||'inherit';
-    span.style.textAlign=el.style.textAlign||'left';
-    span.style.wordBreak='break-word';span.style.whiteSpace='pre-wrap';
-    span.style.background='transparent';span.style.verticalAlign='top';
-    span.textContent=val;
-    el.parentNode.insertBefore(span,el);el.style.display='none';
-    replacements.push({span:span,el:el});
-  });
-  await new Promise(function(r){setTimeout(r,150);});
-  var pages=document.querySelectorAll('.page');
-  var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
-  var pw=doc.internal.pageSize.getWidth(),ph=doc.internal.pageSize.getHeight();
-  for(var i=0;i<pages.length;i++){
-    var canvas=await html2canvas(pages[i],{scale:2,useCORS:true,logging:false,backgroundColor:'#ffffff',width:pages[i].offsetWidth,height:pages[i].offsetHeight});
-    var imgData=canvas.toDataURL('image/jpeg',0.97);
-    var ratio=canvas.width/canvas.height;
-    var iw=pw,ih=iw/ratio;
-    if(i>0)doc.addPage();
-    doc.addImage(imgData,'JPEG',0,0,iw,Math.min(ih,ph));
-  }
-  var ordem=document.getElementById('ordem')?document.getElementById('ordem').value:'SN';
-  doc.save('Relatorio_Operacional_AgroVoo_Matsuda_'+ordem+'.pdf');
-  replacements.forEach(function(r){r.el.style.display='';r.span.remove();});
-  noprints.forEach(function(el){el.style.display='';});
-  btn.disabled=false;btn.textContent='📄 Baixar PDF';
-}
-</script>
+        var shakeStyle = document.createElement('style');
+        shakeStyle.textContent = '@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-8px)}80%{transform:translateX(8px)}}';
+        document.head.appendChild(shakeStyle);
+
+        /* ── REPORT FUNCTIONS ── */
+        function autoResize(el) { el.style.height = 'auto'; el.style.height = (el.scrollHeight) + 'px'; }
+        var MIN_ROWS = 1;
+        function updateMinusBtn(tbodyId, btnId) { var tb = document.getElementById(tbodyId), b = document.getElementById(btnId); if (!b || !tb) return; b.disabled = tb.querySelectorAll('tr').length <= MIN_ROWS; }
+        function removeRow(tbodyId, btnId) { var tb = document.getElementById(tbodyId), rows = tb.querySelectorAll('tr'); if (rows.length <= MIN_ROWS) return; rows[rows.length - 1].remove(); updateMinusBtn(tbodyId, btnId); }
+        function mkTd() { return '<td><input type="text" value="" style="width:100%;border:none;background:transparent;text-align:center;font-size:10px;outline:none;padding:1px;"></td>'; }
+        function addRowAplicacoes() { var tb = document.getElementById('tbodyAplicacoes'), tr = document.createElement('tr'); tr.innerHTML = Array(11).fill('').map(mkTd).join(''); tb.appendChild(tr); updateMinusBtn('tbodyAplicacoes', 'btnMinusApl'); }
+        function addRowReceituario() { var tb = document.getElementById('tbodyReceituario'), tr = document.createElement('tr'); tr.innerHTML = Array(5).fill('').map(mkTd).join(''); tb.appendChild(tr); updateMinusBtn('tbodyReceituario', 'btnMinusRec'); }
+        function loadMapImage(event) { var file = event.target.files[0]; if (!file) return; var reader = new FileReader(); reader.onload = function (e) { var img = document.getElementById('mapaPreview'), hint = document.getElementById('uploadHint'); img.src = e.target.result; img.style.display = 'block'; hint.style.display = 'none'; }; reader.readAsDataURL(file); }
+        function limparMapa() { var img = document.getElementById('mapaPreview'), hint = document.getElementById('uploadHint'); img.src = ''; img.style.display = 'none'; hint.style.display = 'block'; document.getElementById('imgInput').value = ''; }
+
+        async function downloadPDF() {
+            var btn = document.getElementById('btnPDF');
+            btn.disabled = true; btn.textContent = 'Gerando PDF...';
+            var noprints = document.querySelectorAll('.no-print');
+            noprints.forEach(function (el) { el.style.display = 'none'; });
+            var replacements = [];
+            document.querySelectorAll('.page input,.page textarea').forEach(function (el) {
+                var val = el.value || '';
+                var span = document.createElement('span');
+                span.style.display = 'inline-block'; span.style.width = '100%';
+                span.style.fontSize = el.style.fontSize || 'inherit';
+                span.style.fontWeight = el.style.fontWeight || 'inherit';
+                span.style.color = el.style.color || 'inherit';
+                span.style.textAlign = el.style.textAlign || 'left';
+                span.style.wordBreak = 'break-word'; span.style.whiteSpace = 'pre-wrap';
+                span.style.background = 'transparent'; span.style.verticalAlign = 'top';
+                span.textContent = val;
+                el.parentNode.insertBefore(span, el); el.style.display = 'none';
+                replacements.push({ span: span, el: el });
+            });
+            await new Promise(function (r) { setTimeout(r, 150); });
+            var pages = document.querySelectorAll('.page');
+            var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+            var pw = doc.internal.pageSize.getWidth(), ph = doc.internal.pageSize.getHeight();
+            for (var i = 0; i < pages.length; i++) {
+                var canvas = await html2canvas(pages[i], { scale: 2, useCORS: true, logging: false, backgroundColor: '#ffffff', width: pages[i].offsetWidth, height: pages[i].offsetHeight });
+                var imgData = canvas.toDataURL('image/jpeg', 0.97);
+                var ratio = canvas.width / canvas.height;
+                var iw = pw, ih = iw / ratio;
+                if (i > 0) doc.addPage();
+                doc.addImage(imgData, 'JPEG', 0, 0, iw, Math.min(ih, ph));
+            }
+            var ordem = document.getElementById('ordem') ? document.getElementById('ordem').value : 'SN';
+            doc.save('Relatorio_Operacional_AgroVoo_Edna_' + ordem + '.pdf');
+            replacements.forEach(function (r) { r.el.style.display = ''; r.span.remove(); });
+            noprints.forEach(function (el) { el.style.display = ''; });
+            btn.disabled = false; btn.textContent = '📄 Baixar PDF';
+        }
+    </script>
 </body>
+
 </html>
